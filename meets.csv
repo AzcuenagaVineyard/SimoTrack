@@ -1,14 +1,39 @@
-Date,Meet Name,City,State,Venue,Type,FAT,Events,Registration Link,Distance from Buffalo,Entry Deadline,Ranking,Status,Notes
-2026-06-13,Rutgers Summer Series Meet #1 estimated,Piscataway,NJ,Rutgers Track,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,Strong candidate if posted
-2026-06-20,Rutgers Summer Series Meet #2 estimated,Piscataway,NJ,Rutgers Track,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,Strong candidate if posted
-2026-06-27,USATF Niagara Open & Masters Championships,Rochester,NY,Roberts Wesleyan University,USATF,Yes,800/1500,https://niagara.usatf.org/26tf,75 miles,TBD,B,Confirmed,Good local FAT baseline meet
-2026-06-27,USATF Niagara Junior Olympic Championships,Rochester,NY,Roberts Wesleyan University,USATF,Yes,800/1500,https://niagara.usatf.org/jotf25-1,75 miles,TBD,B,Confirmed,Youth pathway option
-2026-07-08,Villanova Summer Twilight #1 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High-priority PR opportunity if open to unattached athletes
-2026-07-10,USATF Region 2 Junior Olympics,Bethlehem,PA,Lehigh University,USATF,Yes,800/1500,https://niagara.usatf.org/events,310 miles,TBD,B,Confirmed,Stronger field but requires qualification/eligibility check
-2026-07-10,Boston University All-Comers #1 estimated,Boston,MA,Boston University,Open / All-Comers,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Estimated,Longer trip but potentially strong field
-2026-07-15,Villanova Summer Twilight #2 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-07-16,USATF Masters Outdoor Championships,Geneva,OH,SPIRE Institute,USATF,Yes,800/1500,https://niagara.usatf.org/events,160 miles,TBD,C,Confirmed,Check youth/open entry eligibility
-2026-07-22,Villanova Summer Twilight #3 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-07-29,Villanova Summer Twilight #4 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-08-01,Garden State Track Club Open estimated,New Brunswick,NJ,Various Tracks,Club,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,B,Estimated,Monitor for FAT and event schedule
-2026-09-12,Villanova Early Season Meet estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Watchlist,Check whether high school/unattached athletes may enter
+Date,Meet Name,City,State,Venue,Host,Type,FAT,Events,Registration Link,Distance from Buffalo,Entry Deadline,Ranking,Status,Confidence,Notes
+2026-05-30,Early Season All-Comers (est.),Princeton,NJ,Princeton Track,Local Clubs,Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,360 miles,TBD,B,Estimated,Medium,Typical late May opener
+2026-06-06,UPenn Summer All-Comers (est.),Philadelphia,PA,Franklin Field,University of Pennsylvania,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,370 miles,TBD,A,Estimated,High,Consistent annual meet
+2026-06-07,AAU New York Metro District Qualifier,New York,NY,Various,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,370 miles,TBD,B,Estimated,Medium,Confirm event list
+2026-06-13,Rutgers Summer Series #1 (est.),Piscataway,NJ,Rutgers University,Rutgers,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,High,Strong pacing potential
+2026-06-13,AAU Lake Erie District Qualifier Day 1,Cleveland,OH,Local Track,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,190 miles,TBD,B,Estimated,Medium,Regional meet
+2026-06-14,AAU Lake Erie District Qualifier Day 2,Cleveland,OH,Local Track,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,190 miles,TBD,B,Estimated,Medium,Regional meet
+2026-06-14,University of Delaware Summer Meet (est.),Newark,DE,UD Track,University of Delaware,Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,400 miles,TBD,B,Estimated,Low,Check posting
+2026-06-18,Vermont All-Comers (est.),Burlington,VT,UVM Track,Local Club,Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,520 miles,TBD,B,Estimated,Low,Limited meets in VT
+2026-06-19,AAU Adirondack District Qualifier Day 1,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Good NY option
+2026-06-20,AAU Adirondack District Qualifier Day 2,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Good NY option
+2026-06-20,Rutgers Summer Series #2 (est.),Piscataway,NJ,Rutgers University,Rutgers,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,High,Strong pacing potential
+2026-06-21,Rhode Island All-Comers (est.),Providence,RI,Brown University,Local Club,Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,460 miles,TBD,B,Estimated,Low,Occasional meet
+2026-06-25,AAU Adirondack Regional Qualifier Day 1,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Regional progression
+2026-06-26,AAU Adirondack Regional Qualifier Day 2,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Regional progression
+2026-06-27,AAU Adirondack Regional Qualifier Day 3,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Regional progression
+2026-06-28,AAU Adirondack Regional Qualifier Day 4,Schenectady,NY,Union College,AAU,AAU,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,260 miles,TBD,B,Estimated,High,Regional progression
+2026-06-27,USATF Niagara Open & Masters Championships,Rochester,NY,Roberts Wesleyan,USATF,USATF Open,Yes,800/1500,https://niagara.usatf.org/26tf,75 miles,TBD,B,Confirmed,High,Local reliable meet
+2026-06-27,USATF Niagara JO Championships,Rochester,NY,Roberts Wesleyan,USATF,USATF Youth,Yes,800/1500,https://niagara.usatf.org/jotf25-1,75 miles,TBD,B,Confirmed,High,Youth pathway
+2026-07-02,Swarthmore Last Chance (est.),Swarthmore,PA,Swarthmore College,Swarthmore,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,380 miles,TBD,A,Estimated,High,Known fast meet
+2026-07-08,Villanova Twilight #1 (est.),Villanova,PA,Villanova Stadium,Villanova,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High,Top-tier meet
+2026-07-10,USATF Region 2 JO Day 1,Bethlehem,PA,Lehigh University,USATF,USATF Regional,Yes,800/1500,https://niagara.usatf.org/events,310 miles,TBD,B,Confirmed,High,Regional meet
+2026-07-10,Boston University All-Comers #1 (est.),Boston,MA,BU Track,Boston University,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Estimated,High,Strong field
+2026-07-11,USATF Region 2 JO Day 2,Bethlehem,PA,Lehigh University,USATF,USATF Regional,Yes,800/1500,https://niagara.usatf.org/events,310 miles,TBD,B,Confirmed,High,Regional meet
+2026-07-12,USATF Region 2 JO Day 3,Bethlehem,PA,Lehigh University,USATF,USATF Regional,Yes,800/1500,https://niagara.usatf.org/events,310 miles,TBD,B,Confirmed,High,Regional meet
+2026-07-15,Villanova Twilight #2 (est.),Villanova,PA,Villanova Stadium,Villanova,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High,Top-tier meet
+2026-07-17,Boston University All-Comers #2 (est.),Boston,MA,BU Track,Boston University,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Estimated,High,Strong field
+2026-07-18,Duke Twilight Meet (est.),Durham,NC,Duke University,Duke,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,650 miles,TBD,A,Estimated,Medium,Long travel high upside
+2026-07-22,Villanova Twilight #3 (est.),Villanova,PA,Villanova Stadium,Villanova,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High,Top-tier meet
+2026-07-24,Boston University All-Comers #3 (est.),Boston,MA,BU Track,Boston University,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Estimated,High,Strong field
+2026-07-29,Villanova Twilight #4 (est.),Villanova,PA,Villanova Stadium,Villanova,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High,Top-tier meet
+2026-08-01,Garden State TC Open (est.),New Brunswick,NJ,Various,GSTC,Club,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,B,Estimated,Medium,Consistent NJ meet
+2026-08-08,Greater Boston TC Meet (est.),Boston,MA,Local Track,GBTC,Club,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,B,Estimated,Medium,Check event list
+2026-08-15,Penn Track Club Meet (est.),Philadelphia,PA,Franklin Field,PTC,Club,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,370 miles,TBD,B,Estimated,Medium,Good late season option
+2026-09-05,Boston College Invitational (est.),Boston,MA,Boston College,Boston College,College Invite,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Watchlist,Medium,Check eligibility
+2026-09-12,Villanova Early Season Meet (est.),Villanova,PA,Villanova Stadium,Villanova,College Invite,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Watchlist,High,Strong meet
+2026-09-19,Richmond Open (est.),Richmond,VA,University of Richmond,Richmond,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,480 miles,TBD,A,Estimated,Medium,Good competition
+2026-10-03,Princeton Fall Twilight (est.),Princeton,NJ,Princeton Track,Local Clubs,Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,360 miles,TBD,B,Estimated,Medium,Late opportunity
+2026-07-25,South Carolina Summer Meet (est.),Columbia,SC,USC Track,University of South Carolina,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,750 miles,TBD,A,Estimated,Low,SC coverage
