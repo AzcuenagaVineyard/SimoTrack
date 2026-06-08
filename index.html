@@ -1,3 +1,4 @@
+</> html
 <!doctype html>
 <html lang="en">
 <head>
@@ -444,8 +445,10 @@
           row.push(field);
           field = '';
         } else if ((c === '
-' || c === '') && !inQuotes) {
-          if (c === '' && n === '
+' || c === '
+') && !inQuotes) {
+          if (c === '
+' && n === '
 ') i++;
           row.push(field);
           field = '';
