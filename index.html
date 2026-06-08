@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026 Track Meet FAT Time Tracker</title>
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --bg2: #f8fafc;
+      --card: #ffffff;
+      --text: #14213d;
+      --muted: #64748b;
+      --border: #d9e2ef;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --blue: #2563eb;
+      --blue-dark: #1e40af;
+      --blue-soft: #dbeafe;
+      --green-bg: #dcfce7;
+      --green: #166534;
+      --yellow-bg: #fef3c7;
+      --yellow: #92400e;
+      --red-bg: #fee2e2;
+      --red: #991b1b;
+      --purple-bg: #ede9fe;
+      --purple: #5b21b6;
+      --gray-bg: #f3f4f6;
+      --gray: #374151;
+      --teal: #0f766e;
+      --teal-bg: #ccfbf1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 34rem),
+        radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.12), transparent 28rem),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { color: var(--blue); }
+
+    header {
+      padding: 34px 32px 20px;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a 52%, #0f766e);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 999px;
+      right: -110px;
+      top: -150px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      color: #dbeafe;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .sub {
+      color: #dbeafe;
+      max-width: 900px;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .toplinks {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btnlink {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #12365f;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      padding: 10px 13px;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btnlink.secondary {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.26);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 22px 32px 34px;
+    }
+
+    .error {
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: none;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 14px;
+      margin: 0 0 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(217, 226, 239, 0.9);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), #14b8a6);
+    }
+
+    .card .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 800;
+    }
+
+    .card .value {
+      font-size: 26px;
+      font-weight: 850;
+      margin: 8px 0 5px;
+      letter-spacing: -0.03em;
+    }
+
+    .card .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span.label {
+      color: var(--text);
+      font-weight: 800;
+      margin-right: 2px;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: minmax(220px, 2fr) repeat(5, minmax(110px, 1fr)) auto auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .control label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #fff;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.28);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border-color: transparent;
+      box-shadow: var(--shadow-soft);
+      white-space: nowrap;
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px 12px;
+      min-height: 40px;
+    }
+
+    .checkbox input {
+      width: auto;
+    }
+
+    .tablewrap {
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      max-height: 72vh;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 1760px;
+    }
+
+    thead {
+      background: #eef4ff;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5edf7;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: linear-gradient(180deg, #eff6ff, #eaf2ff);
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+      font-weight: 850;
+      box-shadow: 0 1px 0 #dbe7f6;
+    }
+
+    th:hover {
+      color: var(--blue-dark);
+      background: #dbeafe;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfdff;
+    }
+
+    tbody tr:hover {
+      background: #f0f7ff;
+    }
+
+    td:first-child,
+    th:first-child {
+      padding-left: 14px;
+    }
+
+    .meet {
+      font-weight: 850;
+      color: #102a56;
+      line-height: 1.25;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-weight: 850;
+      font-size: 12px;
+      white-space: nowrap;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .rank-A { background: var(--green-bg); color: var(--green); }
+    .rank-B { background: var(--yellow-bg); color: var(--yellow); }
+    .rank-C { background: var(--red-bg); color: var(--red); }
+
+    .status-confirmed { background: var(--blue-soft); color: var(--blue-dark); }
+    .status-estimated { background: var(--gray-bg); color: var(--gray); }
+    .status-watchlist { background: var(--purple-bg); color: var(--purple); }
+    .status-completed { background: #e5e7eb; color: #4b5563; }
+
+    .quality-high { background: var(--teal-bg); color: var(--teal); }
+    .quality-medium { background: var(--yellow-bg); color: var(--yellow); }
+    .quality-low { background: var(--gray-bg); color: var(--gray); }
+
+    .deadline-soon {
+      background: var(--red-bg);
+      color: var(--red);
+      border-radius: 7px;
+      padding: 4px 7px;
+      font-weight: 850;
+    }
+
+    .deadline-watch {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-radius: 7px;
+      padding: 4px 7px;
+      font-weight: 850;
+    }
+
+    .note {
+      color: #556579;
+      font-size: 12px;
+      line-height: 1.38;
+      display: inline-block;
+      max-width: 360px;
+    }
+
+    .linkchip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 12px 2px;
+      line-height: 1.4;
+    }
+
+    .loading {
+      padding: 26px;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1200px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 650px) {
+      header, main {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .cards, .controls {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 27px; }
+
+      .tablewrap {
+        max-height: 68vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="hero">
+      <div class="eyebrow">FAT 800m / 1500m Tracker</div>
+      <h1>2026 Track Meet FAT Time Tracker</h1>
+      <div class="sub">
+        Operating dashboard for 800m and 1500m FAT opportunities, May–October 2026.
+        Estimated and Watchlist rows should be verified before travel or registration decisions.
+      </div>
+      <div class="toplinks">
+        <a class="btnlink" href="https://www.athletic.net/TrackAndField/Calendar" target="_blank" rel="noopener">Athletic.net Calendar</a>
+        <a class="btnlink secondary" href="track_meet_tracker_2026.csv" target="_blank" rel="noopener">Open CSV</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="error" class="error"></div>
+
+    <div id="cards" class="cards"></div>
+
+    <div class="legend">
+      <span class="label">Ranking:</span>
+      <span class="pill rank-A">A = Best PR / recruiting target</span>
+      <span class="pill rank-B">B = Useful option</span>
+      <span class="pill rank-C">C = Backup / uncertain</span>
+    </div>
+
+    <div class="controls">
+      <div class="control">
+        <label for="search">Search</label>
+        <input id="search" placeholder="Search meet, city, notes..." />
+      </div>
+
+      <div class="control">
+        <label for="month">Month</label>
+        <select id="month"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="state">State</label>
+        <select id="state"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="type">Type</label>
+        <select id="type"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="ranking">Ranking</label>
+        <select id="ranking"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="status">Status</label>
+        <select id="status"><option value="">All</option></select>
+      </div>
+
+      <button id="reset" type="button">Reset</button>
+
+      <label class="checkbox">
+        <input type="checkbox" id="hideCompleted" />
+        Hide completed/closed
+      </label>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr id="thead"></tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td class="loading">Loading meet data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footer">
+      This page loads <code>track_meet_tracker_2026.csv</code> from the same GitHub folder.
+      To update the dashboard, update that CSV and hard-refresh the page.
+    </p>
+  </main>
+
+  <script>
+    const CSV_FILE = 'track_meet_tracker_2026.csv';
+
+    const DISPLAY_COLS = [
+      'Date_Start',
+      'Date_End',
+      'Month',
+      'Meet_Name',
+      'City',
+      'State',
+      'Venue',
+      'Host',
+      'Meet_Type',
+      'FAT_Status',
+      'Events_Targeted',
+      'Registration_URL',
+      'Info_URL',
+      'Distance_From_Buffalo_Miles',
+      'Drive_Time_Est',
+      'Entry_Deadline',
+      'Recruiting_Ranking',
+      'Status',
+      'Confidence',
+      'Event_Verified',
+      'Unattached_Allowed',
+      'Age_Eligibility',
+      'Heat_Quality',
+      'Next_Action',
+      'Notes'
+    ];
+
+    let data = [];
+    let sortKey = 'Date_Start';
+    let sortDir = 1;
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const n = text[i + 1];
+
+        if (c === '"') {
+          if (inQuotes && n === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === ',' && !inQuotes) {
+          row.push(field);
+          field = '';
+        } else if ((c === '\n' || c === '\r') && !inQuotes) {
+          if (c === '\r' && n === '\n') i++;
+          row.push(field);
+          field = '';
+          if (row.some(x => String(x).trim() !== '')) rows.push(row);
+          row = [];
+        } else {
+          field += c;
+        }
+      }
+
+      if (field.length || row.length) {
+        row.push(field);
+        if (row.some(x => String(x).trim() !== '')) rows.push(row);
+      }
+
+      if (!rows.length) return [];
+
+      const headers = rows.shift().map(h => h.trim().replace(/^\uFEFF/, ''));
+
+      return rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = (r[i] || '').trim();
+        });
+        return obj;
+      });
+    }
+
+    function normalizeRow(row) {
+      const aliases = {
+        Date: 'Date_Start',
+        'Meet Name': 'Meet_Name',
+        Meet_Name: 'Meet_Name',
+        Type: 'Meet_Type',
+        FAT: 'FAT_Status',
+        Events: 'Events_Targeted',
+        'Registration Link': 'Registration_URL',
+        Registration_Link: 'Registration_URL',
+        Distance: 'Distance_From_Buffalo_Miles',
+        'Distance from Buffalo': 'Distance_From_Buffalo_Miles',
+        Ranking: 'Recruiting_Ranking'
+      };
+
+      const normalized = { ...row };
+
+      for (const [oldKey, newKey] of Object.entries(aliases)) {
+        if (!normalized[newKey] && normalized[oldKey]) {
+          normalized[newKey] = normalized[oldKey];
+        }
+      }
+
+      return normalized;
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(CSV_FILE + '?v=' + Date.now(), { cache: 'no-store' });
+
+        if (!res.ok) {
+          throw new Error('CSV fetch failed with status ' + res.status);
+        }
+
+        const text = await res.text();
+        data = parseCSV(text).map(normalizeRow);
+
+        if (!data.length) {
+          throw new Error('CSV loaded but parsed with zero rows.');
+        }
+
+        init();
+      } catch (err) {
+        showError('Could not load track_meet_tracker_2026.csv. Check that the CSV is in the same GitHub folder as index.html and that it has comma-separated headers.');
+        console.error(err);
+      }
+    }
+
+    function showError(message) {
+      const error = document.getElementById('error');
+      error.style.display = 'block';
+      error.textContent = message;
+    }
+
+    function label(s) {
+      return String(s).replaceAll('_', ' ');
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[m];
+      });
+    }
+
+    function unique(col) {
+      return [...new Set(data.map(r => r[col]).filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
+    }
+
+    function addOptions(id, col) {
+      const sel = document.getElementById(id);
+
+      [...sel.querySelectorAll('option:not(:first-child)')].forEach(o => o.remove());
+
+      unique(col).forEach(v => {
+        const option = document.createElement('option');
+        option.value = v;
+        option.textContent = v;
+        sel.appendChild(option);
+      });
+    }
+
+    function init() {
+      addOptions('month', 'Month');
+      addOptions('state', 'State');
+      addOptions('type', 'Meet_Type');
+      addOptions('ranking', 'Recruiting_Ranking');
+      addOptions('status', 'Status');
+
+      document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', render);
+      });
+
+      document.getElementById('reset').addEventListener('click', () => {
+        ['search', 'month', 'state', 'type', 'ranking', 'status'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+
+        document.getElementById('hideCompleted').checked = false;
+        render();
+      });
+
+      const thead = document.getElementById('thead');
+      thead.innerHTML = '';
+
+      DISPLAY_COLS.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = label(col);
+        th.title = 'Click to sort';
+        th.addEventListener('click', () => {
+          if (sortKey === col) {
+            sortDir *= -1;
+          } else {
+            sortKey = col;
+            sortDir = 1;
+          }
+
+          render();
+        });
+
+        thead.appendChild(th);
+      });
+
+      render();
+    }
+
+    function daysUntil(dateStr) {
+      if (!dateStr) return null;
+
+      const lower = String(dateStr).toLowerCase();
+
+      if (
+        lower === 'tbd' ||
+        lower.includes('closed') ||
+        lower.includes('past') ||
+        lower.includes('check') ||
+        lower.includes('requires')
+      ) {
+        return null;
+      }
+
+      const iso = String(dateStr).slice(0, 10);
+      const d = new Date(iso + 'T00:00:00');
+
+      if (isNaN(d)) return null;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return Math.round((d - today) / 86400000);
+    }
+
+    function isCompletedOrClosed(row) {
+      const text = [
+        row.Status,
+        row.Entry_Deadline,
+        row.Next_Action,
+        row.Notes
+      ].join(' ').toLowerCase();
+
+      return (
+        text.includes('completed') ||
+        text.includes('closed') ||
+        text.includes('past')
+      );
+    }
+
+    function filtered() {
+      const q = document.getElementById('search').value.toLowerCase();
+
+      const filters = {
+        Month: 'month',
+        State: 'state',
+        Meet_Type: 'type',
+        Recruiting_Ranking: 'ranking',
+        Status: 'status'
+      };
+
+      return data.filter(row => {
+        if (document.getElementById('hideCompleted').checked && isCompletedOrClosed(row)) {
+          return false;
+        }
+
+        for (const [col, id] of Object.entries(filters)) {
+          const selected = document.getElementById(id).value;
+          if (selected && row[col] !== selected) {
+            return false;
+          }
+        }
+
+        if (q && !Object.values(row).join(' ').toLowerCase().includes(q)) {
+          return false;
+        }
+
+        return true;
+      }).sort((a, b) => {
+        return String(a[sortKey] || '').localeCompare(String(b[sortKey] || ''), undefined, { numeric: true }) * sortDir;
+      });
+    }
+
+    function renderCards(rows) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      const upcoming = rows
+        .filter(r => String(r.Date_Start || '') >= todayStr)
+        .sort((a, b) => String(a.Date_Start || '').localeCompare(String(b.Date_Start || '')))[0];
+
+      const deadlines14 = rows.filter(r => {
+        const d = daysUntil(r.Entry_Deadline);
+        return d !== null && d >= 0 && d <= 14;
+      }).length;
+
+      const confirmedCount = rows.filter(r => String(r.Status || '').toLowerCase().includes('confirmed')).length;
+      const aTierCount = rows.filter(r => r.Recruiting_Ranking === 'A').length;
+
+      const cards = [
+        ['Visible Meets', rows.length, 'After filters'],
+        ['A-Tier Meets', aTierCount, 'Best PR/recruiting targets'],
+        ['Confirmed', confirmedCount, 'Actual 2026 detail known'],
+        ['Deadlines ≤14 Days', deadlines14, 'Based on Entry Deadline'],
+        ['Next Visible Meet', upcoming ? upcoming.Date_Start : '—', upcoming ? upcoming.Meet_Name : 'No upcoming visible meet']
+      ];
+
+      document.getElementById('cards').innerHTML = cards.map(c => `
+        <div class="card">
+          <div class="label">${esc(c[0])}</div>
+          <div class="value">${esc(c[1])}</div>
+          <div class="small">${esc(c[2])}</div>
+        </div>
+      `).join('');
+    }
+
+    function statusClass(value) {
+      const lower = String(value || '').toLowerCase();
+
+      if (lower.includes('confirmed')) return 'status-confirmed';
+      if (lower.includes('estimated')) return 'status-estimated';
+      if (lower.includes('watchlist')) return 'status-watchlist';
+      if (lower.includes('completed')) return 'status-completed';
+
+      return 'status-estimated';
+    }
+
+    function heatClass(value) {
+      const lower = String(value || '').toLowerCase();
+
+      if (lower.includes('high')) return 'quality-high';
+      if (lower.includes('medium')) return 'quality-medium';
+      if (lower.includes('low')) return 'quality-low';
+
+      return 'quality-medium';
+    }
+
+    function cell(col, value) {
+      const val = value || '';
+
+      if ((col === 'Registration_URL' || col === 'Info_URL') && val) {
+        return `<a class="linkchip" href="${esc(val)}" target="_blank" rel="noopener">Open</a>`;
+      }
+
+      if (col === 'Meet_Name') {
+        return `<span class="meet">${esc(val)}</span>`;
+      }
+
+      if (col === 'Recruiting_Ranking' && val) {
+        return `<span class="pill rank-${esc(val)}">${esc(val)}</span>`;
+      }
+
+      if (col === 'Status' && val) {
+        return `<span class="pill ${statusClass(val)}">${esc(val)}</span>`;
+      }
+
+      if (col === 'Heat_Quality' && val) {
+        return `<span class="pill ${heatClass(val)}">${esc(val)}</span>`;
+      }
+
+      if (col === 'Entry_Deadline') {
+        const d = daysUntil(val);
+        let cls = '';
+
+        if (d !== null && d >= 0 && d <= 7) {
+          cls = 'deadline-soon';
+        } else if (d !== null && d >= 0 && d <= 21) {
+          cls = 'deadline-watch';
+        }
+
+        return `<span class="${cls}">${esc(val || 'TBD')}</span>`;
+      }
+
+      if (col === 'Notes' || col === 'Next_Action') {
+        return `<span class="note">${esc(val)}</span>`;
+      }
+
+      return esc(val);
+    }
+
+    function render() {
+      const rows = filtered();
+
+      renderCards(rows);
+
+      const tbody = document.getElementById('tbody');
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="${DISPLAY_COLS.length}">No meets match the current filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(row => {
+        const cells = DISPLAY_COLS.map(col => `<td>${cell(col, row[col] || '')}</td>`).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
