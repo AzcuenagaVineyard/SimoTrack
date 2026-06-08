@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026 Track Meet FAT Time Tracker</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9dee8;
+      --shadow: 0 1px 8px rgba(16, 24, 40, 0.08);
+      --blue: #175cd3;
+      --green-bg: #dcfce7;
+      --green: #166534;
+      --yellow-bg: #fef3c7;
+      --yellow: #92400e;
+      --red-bg: #fee2e2;
+      --red: #991b1b;
+      --purple-bg: #ede9fe;
+      --purple: #5b21b6;
+      --gray-bg: #f3f4f6;
+      --gray: #374151;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 26px 28px 14px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .sub {
+      color: var(--muted);
+      max-width: 1050px;
+      line-height: 1.45;
+    }
+
+    .toplinks {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    a { color: var(--blue); }
+
+    .btnlink {
+      display: inline-block;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+    }
+
+    main {
+      padding: 0 28px 28px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 12px 0 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .card .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card .value {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 6px 0;
+    }
+
+    .card .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 2fr repeat(5, 1fr) auto auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .control label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .checkbox input {
+      width: auto;
+    }
+
+    .tablewrap {
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1700px;
+    }
+
+    thead {
+      background: #eef2f8;
+    }
+
+    th, td {
+      padding: 10px 9px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #eef2f8;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tbody tr:hover {
+      background: #fafcff;
+    }
+
+    .meet {
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .rank-A { background: var(--green-bg); color: var(--green); }
+    .rank-B { background: var(--yellow-bg); color: var(--yellow); }
+    .rank-C { background: var(--red-bg); color: var(--red); }
+
+    .status-confirmed { background: #dbeafe; color: #1e40af; }
+    .status-estimated { background: var(--gray-bg); color: var(--gray); }
+    .status-watchlist { background: var(--purple-bg); color: var(--purple); }
+    .status-completed { background: #e5e7eb; color: #4b5563; }
+
+    .deadline-soon {
+      background: var(--red-bg);
+      color: var(--red);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-weight: 700;
+    }
+
+    .deadline-watch {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-weight: 700;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .error {
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 12px 2px;
+    }
+
+    @media (max-width: 1100px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 650px) {
+      header, main {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .cards, .controls {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>2026 Track Meet FAT Time Tracker</h1>
+    <div class="sub">
+      Operating dashboard for 800m and 1500m FAT opportunities, May–October 2026.
+      Rows marked Estimated or Watchlist require weekly verification before travel or registration decisions.
+    </div>
+    <div class="toplinks">
+      <a class="btnlink" href="https://www.athletic.net/TrackAndField/Calendar" target="_blank" rel="noopener">Athletic.net Track & Field Calendar</a>
+      <a class="btnlink" href="track_meet_tracker_2026.csv" target="_blank" rel="noopener">Open CSV</a>
+    </div>
+  </header>
+
+  <main>
+    <div id="error" class="error"></div>
+
+    <div id="cards" class="cards"></div>
+
+    <div class="controls">
+      <div class="control">
+        <label for="search">Search</label>
+        <input id="search" placeholder="Search meet, city, notes..." />
+      </div>
+
+      <div class="control">
+        <label for="month">Month</label>
+        <select id="month"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="state">State</label>
+        <select id="state"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="type">Type</label>
+        <select id="type"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="ranking">Ranking</label>
+        <select id="ranking"><option value="">All</option></select>
+      </div>
+
+      <div class="control">
+        <label for="status">Status</label>
+        <select id="status"><option value="">All</option></select>
+      </div>
+
+      <button id="reset" type="button">Reset</button>
+
+      <label class="checkbox">
+        <input type="checkbox" id="hideCompleted" />
+        Hide completed/closed
+      </label>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr id="thead"></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <p class="footer">
+      This page loads <code>track_meet_tracker_2026.csv</code> from the same GitHub folder.
+      To update the dashboard, update that CSV and refresh this page.
+    </p>
+  </main>
+
+  <script>
+    const CSV_FILE = 'track_meet_tracker_2026.csv';
+
+    const DISPLAY_COLS = [
+      'Date_Start',
+      'Date_End',
+      'Month',
+      'Meet_Name',
+      'City',
+      'State',
+      'Venue',
+      'Host',
+      'Meet_Type',
+      'FAT_Status',
+      'Events_Targeted',
+      'Registration_URL',
+      'Info_URL',
+      'Distance_From_Buffalo_Miles',
+      'Drive_Time_Est',
+      'Entry_Deadline',
+      'Recruiting_Ranking',
+      'Status',
+      'Confidence',
+      'Event_Verified',
+      'Unattached_Allowed',
+      'Age_Eligibility',
+      'Heat_Quality',
+      'Next_Action',
+      'Notes'
+    ];
+
+    let data = [];
+    let sortKey = 'Date_Start';
+    let sortDir = 1;
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const n = text[i + 1];
+
+        if (c === '"') {
+          if (inQuotes && n === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === ',' && !inQuotes) {
+          row.push(field);
+          field = '';
+        } else if ((c === '\n' || c === '\r') && !inQuotes) {
+          if (c === '\r' && n === '\n') i++;
+          row.push(field);
+          field = '';
+          if (row.some(x => String(x).trim() !== '')) rows.push(row);
+          row = [];
+        } else {
+          field += c;
+        }
+      }
+
+      if (field.length || row.length) {
+        row.push(field);
+        if (row.some(x => String(x).trim() !== '')) rows.push(row);
+      }
+
+      if (!rows.length) return [];
+
+      const headers = rows.shift().map(h => h.trim().replace(/^\uFEFF/, ''));
+
+      return rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = (r[i] || '').trim();
+        });
+        return obj;
+      });
+    }
+
+    function normalizeRow(row) {
+      const aliases = {
+        Date: 'Date_Start',
+        'Meet Name': 'Meet_Name',
+        Meet_Name: 'Meet_Name',
+        Type: 'Meet_Type',
+        FAT: 'FAT_Status',
+        Events: 'Events_Targeted',
+        'Registration Link': 'Registration_URL',
+        Registration_Link: 'Registration_URL',
+        Distance: 'Distance_From_Buffalo_Miles',
+        'Distance from Buffalo': 'Distance_From_Buffalo_Miles',
+        Ranking: 'Recruiting_Ranking'
+      };
+
+      const normalized = { ...row };
+
+      for (const [oldKey, newKey] of Object.entries(aliases)) {
+        if (!normalized[newKey] && normalized[oldKey]) {
+          normalized[newKey] = normalized[oldKey];
+        }
+      }
+
+      return normalized;
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(CSV_FILE + '?v=' + Date.now(), { cache: 'no-store' });
+
+        if (!res.ok) {
+          throw new Error('CSV fetch failed with status ' + res.status);
+        }
+
+        const text = await res.text();
+        data = parseCSV(text).map(normalizeRow);
+
+        if (!data.length) {
+          throw new Error('CSV loaded but parsed with zero rows.');
+        }
+
+        init();
+      } catch (err) {
+        showError('Could not load track_meet_tracker_2026.csv. Check that the CSV is in the same GitHub folder as index.html and that it has comma-separated headers.');
+        console.error(err);
+      }
+    }
+
+    function showError(message) {
+      const error = document.getElementById('error');
+      error.style.display = 'block';
+      error.textContent = message;
+    }
+
+    function label(s) {
+      return String(s).replaceAll('_', ' ');
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[m];
+      });
+    }
+
+    function unique(col) {
+      return [...new Set(data.map(r => r[col]).filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
+    }
+
+    function addOptions(id, col) {
+      const sel = document.getElementById(id);
+
+      [...sel.querySelectorAll('option:not(:first-child)')].forEach(o => o.remove());
+
+      unique(col).forEach(v => {
+        const option = document.createElement('option');
+        option.value = v;
+        option.textContent = v;
+        sel.appendChild(option);
+      });
+    }
+
+    function init() {
+      addOptions('month', 'Month');
+      addOptions('state', 'State');
+      addOptions('type', 'Meet_Type');
+      addOptions('ranking', 'Recruiting_Ranking');
+      addOptions('status', 'Status');
+
+      document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', render);
+      });
+
+      document.getElementById('reset').addEventListener('click', () => {
+        ['search', 'month', 'state', 'type', 'ranking', 'status'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+
+        document.getElementById('hideCompleted').checked = false;
+        render();
+      });
+
+      const thead = document.getElementById('thead');
+      thead.innerHTML = '';
+
+      DISPLAY_COLS.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = label(col);
+        th.title = 'Click to sort';
+        th.addEventListener('click', () => {
+          if (sortKey === col) {
+            sortDir *= -1;
+          } else {
+            sortKey = col;
+            sortDir = 1;
+          }
+
+          render();
+        });
+
+        thead.appendChild(th);
+      });
+
+      render();
+    }
+
+    function daysUntil(dateStr) {
+      if (!dateStr) return null;
+
+      const lower = String(dateStr).toLowerCase();
+
+      if (
+        lower === 'tbd' ||
+        lower.includes('closed') ||
+        lower.includes('past') ||
+        lower.includes('check') ||
+        lower.includes('requires')
+      ) {
+        return null;
+      }
+
+      const iso = String(dateStr).slice(0, 10);
+      const d = new Date(iso + 'T00:00:00');
+
+      if (isNaN(d)) return null;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return Math.round((d - today) / 86400000);
+    }
+
+    function isCompletedOrClosed(row) {
+      const text = [
+        row.Status,
+        row.Entry_Deadline,
+        row.Next_Action,
+        row.Notes
+      ].join(' ').toLowerCase();
+
+      return (
+        text.includes('completed') ||
+        text.includes('closed') ||
+        text.includes('past')
+      );
+    }
+
+    function filtered() {
+      const q = document.getElementById('search').value.toLowerCase();
+
+      const filters = {
+        Month: 'month',
+        State: 'state',
+        Meet_Type: 'type',
+        Recruiting_Ranking: 'ranking',
+        Status: 'status'
+      };
+
+      return data.filter(row => {
+        if (document.getElementById('hideCompleted').checked && isCompletedOrClosed(row)) {
+          return false;
+        }
+
+        for (const [col, id] of Object.entries(filters)) {
+          const selected = document.getElementById(id).value;
+          if (selected && row[col] !== selected) {
+            return false;
+          }
+        }
+
+        if (q && !Object.values(row).join(' ').toLowerCase().includes(q)) {
+          return false;
+        }
+
+        return true;
+      }).sort((a, b) => {
+        return String(a[sortKey] || '').localeCompare(String(b[sortKey] || ''), undefined, { numeric: true }) * sortDir;
+      });
+    }
+
+    function renderCards(rows) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      const upcoming = rows
+        .filter(r => String(r.Date_Start || '') >= todayStr)
+        .sort((a, b) => String(a.Date_Start || '').localeCompare(String(b.Date_Start || '')))[0];
+
+      const deadlines14 = rows.filter(r => {
+        const d = daysUntil(r.Entry_Deadline);
+        return d !== null && d >= 0 && d <= 14;
+      }).length;
+
+      const cards = [
+        ['Visible Meets', rows.length, 'After filters'],
+        ['A-Tier Meets', rows.filter(r => r.Recruiting_Ranking === 'A').length, 'Best PR/recruiting targets'],
+        ['Confirmed', rows.filter(r => String(r.Status || '').toLowerCase().includes('confirmed')).length, 'Actual 2026 detail known'],
+        ['Deadlines ≤14 Days', deadlines14, 'Based on Entry Deadline'],
+        ['Next Visible Meet', upcoming ? upcoming.Date_Start : '—', upcoming ? upcoming.Meet_Name : 'No upcoming visible meet']
+      ];
+
+      document.getElementById('cards').innerHTML = cards.map(c => `
+        <div class="card">
+          <div class="label">${esc(c[0])}</div>
+          <div class="value">${esc(c[1])}</div>
+          <div class="small">${esc(c[2])}</div>
+        </div>
+      `).join('');
+    }
+
+    function statusClass(value) {
+      const lower = String(value || '').toLowerCase();
+
+      if (lower.includes('confirmed')) return 'status-confirmed';
+      if (lower.includes('estimated')) return 'status-estimated';
+      if (lower.includes('watchlist')) return 'status-watchlist';
+      if (lower.includes('completed')) return 'status-completed';
+
+      return 'status-estimated';
+    }
+
+    function cell(col, value) {
+      const val = value || '';
+
+      if ((col === 'Registration_URL' || col === 'Info_URL') && val) {
+        return `<a href="${esc(val)}" target="_blank" rel="noopener">Open</a>`;
+      }
+
+      if (col === 'Meet_Name') {
+        return `<span class="meet">${esc(val)}</span>`;
+      }
+
+      if (col === 'Recruiting_Ranking' && val) {
+        return `<span class="pill rank-${esc(val)}">${esc(val)}</span>`;
+      }
+
+      if (col === 'Status' && val) {
+        return `<span class="pill ${statusClass(val)}">${esc(val)}</span>`;
+      }
+
+      if (col === 'Entry_Deadline') {
+        const d = daysUntil(val);
+        let cls = '';
+
+        if (d !== null && d >= 0 && d <= 7) {
+          cls = 'deadline-soon';
+        } else if (d !== null && d >= 0 && d <= 21) {
+          cls = 'deadline-watch';
+        }
+
+        return `<span class="${cls}">${esc(val || 'TBD')}</span>`;
+      }
+
+      if (col === 'Notes' || col === 'Next_Action') {
+        return `<span class="note">${esc(val)}</span>`;
+      }
+
+      return esc(val);
+    }
+
+    function render() {
+      const rows = filtered();
+
+      renderCards(rows);
+
+      const tbody = document.getElementById('tbody');
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="${DISPLAY_COLS.length}">No meets match the current filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(row => {
+        const cells = DISPLAY_COLS.map(col => `<td>${cell(col, row[col] || '')}</td>`).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
