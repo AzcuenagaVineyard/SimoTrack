@@ -1,964 +1,275 @@
-<!DOCTYPE html>
+  <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 Track Meet Tracker — 800m / 1500m</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #faf7f2;
-    --bg-card: #ffffff;
-    --ink: #1a1a1a;
-    --ink-soft: #4a4a48;
-    --ink-mute: #8a8a86;
-    --rule: #e8e2d6;
-    --rule-strong: #c9c1b1;
-    --accent: #1f4d3a;
-    --accent-soft: #e6efe9;
-
-    --rank-a-bg: #e8f3ec;
-    --rank-a-ink: #1f5236;
-    --rank-a-bar: #2d8659;
-
-    --rank-b-bg: #fdf4e3;
-    --rank-b-ink: #6b4a16;
-    --rank-b-bar: #c89432;
-
-    --rank-c-bg: #f3eee8;
-    --rank-c-ink: #6a5a4a;
-    --rank-c-bar: #a08e76;
-
-    --status-confirmed: #2d8659;
-    --status-estimated: #c89432;
-    --status-watchlist: #5a7fb8;
-    --status-closed: #b85a5a;
-    --status-completed: #8a8a86;
-
-    --deadline-soon-bg: #fff4e0;
-    --deadline-soon-ink: #8a4a00;
-    --deadline-urgent-bg: #ffe6e0;
-    --deadline-urgent-ink: #a02a14;
-  }
-
-  * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter', -apple-system, system-ui, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 32px 28px 80px;
-  }
-
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 28px;
-    margin-bottom: 28px;
-  }
-
-  .eyebrow {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  h1 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 600;
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    margin: 0 0 14px;
-  }
-
-  h1 em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--ink-soft);
-  }
-
-  .lede {
-    font-size: 16px;
-    color: var(--ink-soft);
-    max-width: 720px;
-    margin: 0 0 22px;
-  }
-
-  .athletic-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--accent);
-    color: #fff;
-    text-decoration: none;
-    padding: 11px 18px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: background 0.15s;
-  }
-  .athletic-link:hover { background: #163b2c; }
-  .athletic-link::after {
-    content: "↗";
-    font-size: 16px;
-    line-height: 1;
-  }
-
-  /* STATS STRIP */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 28px;
-  }
-  .stat {
-    background: var(--bg-card);
-    padding: 14px 16px;
-  }
-  .stat-num {
-    font-family: 'Fraunces', serif;
-    font-size: 26px;
-    font-weight: 600;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .stat-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
-    font-weight: 500;
-  }
-
-  /* CONTROLS */
-  .controls {
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    padding: 18px 20px;
-    margin-bottom: 20px;
-  }
-
-  .search-row {
-    margin-bottom: 14px;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 11px 14px 11px 38px;
-    border: 1px solid var(--rule-strong);
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    background: var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a86' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") no-repeat 13px center;
-    transition: border-color 0.15s;
-  }
-  .search-input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .filter-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-  }
-
-  .filter-field label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
-    font-weight: 600;
-    margin-bottom: 5px;
-  }
-
-  .filter-field select {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid var(--rule-strong);
-    border-radius: 5px;
-    background: var(--bg-card);
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .filter-field select:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .reset-btn {
-    background: none;
-    border: 1px solid var(--rule-strong);
-    color: var(--ink-soft);
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 12px;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: all 0.15s;
-  }
-  .reset-btn:hover {
-    border-color: var(--ink);
-    color: var(--ink);
-  }
-
-  /* TABLE */
-  .table-wrap {
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .table-scroll {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  thead {
-    background: #f4efe5;
-  }
-
-  th {
-    text-align: left;
-    padding: 12px 14px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--ink-soft);
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 1px solid var(--rule);
-    position: relative;
-  }
-  th:hover { color: var(--ink); }
-  th .sort-arrow {
-    display: inline-block;
-    margin-left: 4px;
-    color: var(--ink-mute);
-    font-size: 10px;
-  }
-  th.sorted-asc .sort-arrow,
-  th.sorted-desc .sort-arrow {
-    color: var(--accent);
-  }
-
-  td {
-    padding: 13px 14px;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-  }
-
-  tbody tr {
-    transition: background 0.1s;
-  }
-  tbody tr:hover {
-    background: #fcfaf5;
-  }
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  /* Ranking cell */
-  td.rank-cell {
-    padding-left: 0;
-  }
-  .rank-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 14px;
-    margin-left: 14px;
-  }
-  .rank-A {
-    background: var(--rank-a-bg);
-    color: var(--rank-a-ink);
-    border: 1.5px solid var(--rank-a-bar);
-  }
-  .rank-B {
-    background: var(--rank-b-bg);
-    color: var(--rank-b-ink);
-    border: 1.5px solid var(--rank-b-bar);
-  }
-  .rank-C {
-    background: var(--rank-c-bg);
-    color: var(--rank-c-ink);
-    border: 1.5px solid var(--rank-c-bar);
-  }
-
-  tr.row-A { box-shadow: inset 4px 0 0 var(--rank-a-bar); }
-  tr.row-B { box-shadow: inset 4px 0 0 var(--rank-b-bar); }
-  tr.row-C { box-shadow: inset 4px 0 0 var(--rank-c-bar); }
-
-  /* Date cell */
-  .date-main {
-    font-weight: 600;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-  .date-sub {
-    font-size: 11px;
-    color: var(--ink-mute);
-    margin-top: 2px;
-  }
-
-  /* Meet name */
-  .meet-name {
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
-  .meet-venue {
-    font-size: 11px;
-    color: var(--ink-mute);
-  }
-
-  /* Status pill */
-  .status {
-    display: inline-block;
-    padding: 3px 9px;
-    border-radius: 11px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-  .status-confirmed { background: #e0f0e6; color: var(--status-confirmed); }
-  .status-estimated { background: #fdf0d9; color: var(--status-estimated); }
-  .status-watchlist { background: #e2ebf6; color: var(--status-watchlist); }
-  .status-closed    { background: #f7e0dc; color: var(--status-closed); }
-  .status-completed { background: #efeae3; color: var(--status-completed); }
-
-  /* FAT marker */
-  .fat-yes {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .fat-no {
-    color: var(--ink-mute);
-  }
-
-  /* Reg link */
-  .reg-link {
-    color: var(--accent);
-    text-decoration: none;
-    border-bottom: 1px solid var(--rule-strong);
-    padding-bottom: 1px;
-    transition: border-color 0.15s;
-    word-break: break-word;
-  }
-  .reg-link:hover {
-    border-bottom-color: var(--accent);
-  }
-
-  /* Deadline */
-  .deadline-soon {
-    background: var(--deadline-soon-bg);
-    color: var(--deadline-soon-ink);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-  .deadline-urgent {
-    background: var(--deadline-urgent-bg);
-    color: var(--deadline-urgent-ink);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .notes-cell {
-    color: var(--ink-soft);
-    font-size: 12px;
-    max-width: 240px;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--ink-mute);
-  }
-  .empty-state-title {
-    font-family: 'Fraunces', serif;
-    font-size: 20px;
-    color: var(--ink-soft);
-    margin-bottom: 6px;
-  }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 20px;
-    padding: 14px 18px;
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    font-size: 12px;
-    color: var(--ink-soft);
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .legend-swatch {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-  }
-
-  footer {
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid var(--rule);
-    font-size: 12px;
-    color: var(--ink-mute);
-    text-align: center;
-  }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
-    .wrap { padding: 20px 16px 60px; }
-    .filter-row { grid-template-columns: 1fr 1fr; }
-    th, td { padding: 10px; font-size: 12px; }
-    .notes-cell { max-width: 180px; }
-
-    /* Hide less critical columns on small screens */
-    .col-venue, .col-distance { display: none; }
-  }
-
-  @media (max-width: 480px) {
-    .col-city, .col-state, .col-events { display: none; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026 Track Meet FAT Opportunity Tracker</title>
+  <style>
+    :root {
+      --bg:#f6f7fb; --panel:#ffffff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+      --blue:#2563eb; --red:#dc2626; --amber:#d97706; --green:#16a34a; --purple:#7c3aed;
+      --rankA:#dcfce7; --rankAtext:#166534; --rankB:#dbeafe; --rankBtext:#1e40af; --rankC:#fef3c7; --rankCtext:#92400e;
+      --shadow:0 8px 24px rgba(15,23,42,.08);
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
+    header { background:linear-gradient(135deg,#111827,#374151); color:white; padding:28px 18px 22px; }
+    .wrap { max-width:1280px; margin:0 auto; }
+    h1 { margin:0 0 8px; font-size:clamp(24px,3vw,38px); line-height:1.1; }
+    .sub { margin:0; color:#d1d5db; max-width:900px; line-height:1.45; }
+    .toplinks { margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+    .toplinks a, .btn { display:inline-block; padding:10px 13px; border-radius:10px; background:#fff; color:#111827; text-decoration:none; font-weight:650; border:1px solid var(--line); cursor:pointer; }
+    main { padding:20px 18px 40px; }
+    .cards { display:grid; grid-template-columns:repeat(5,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; box-shadow:var(--shadow); }
+    .card .label { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+    .card .value { font-size:26px; font-weight:760; margin-top:5px; }
+    .card .small { font-size:12px; color:var(--muted); margin-top:3px; }
+    .filters { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; box-shadow:var(--shadow); margin-bottom:16px; }
+    .filtergrid { display:grid; grid-template-columns: 1.8fr repeat(5, 1fr); gap:10px; }
+    input, select { width:100%; padding:10px 11px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; background:white; }
+    .actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; color:var(--muted); font-size:13px; }
+    .tablewrap { background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:auto; box-shadow:var(--shadow); }
+    table { width:100%; border-collapse:collapse; min-width:1500px; }
+    th, td { padding:10px 11px; border-bottom:1px solid var(--line); vertical-align:top; font-size:13px; }
+    th { position:sticky; top:0; background:#f9fafb; color:#374151; text-align:left; z-index:1; cursor:pointer; white-space:nowrap; }
+    th:hover { background:#eef2ff; }
+    td { line-height:1.35; }
+    .meet { font-weight:700; }
+    .muted { color:var(--muted); }
+    .pill { display:inline-flex; align-items:center; justify-content:center; min-width:24px; padding:4px 8px; border-radius:999px; font-weight:750; font-size:12px; white-space:nowrap; }
+    .rank-A { background:var(--rankA); color:var(--rankAtext); }
+    .rank-B { background:var(--rankB); color:var(--rankBtext); }
+    .rank-C { background:var(--rankC); color:var(--rankCtext); }
+    .status-Confirmed { background:#dcfce7; color:#166534; }
+    .status-Estimated { background:#fef3c7; color:#92400e; }
+    .status-Watchlist { background:#ede9fe; color:#5b21b6; }
+    .status-Completed { background:#e5e7eb; color:#374151; }
+    .status-Closed { background:#fee2e2; color:#991b1b; }
+    .deadline-soon { color:var(--red); font-weight:750; }
+    .deadline-watch { color:var(--amber); font-weight:700; }
+    a { color:var(--blue); }
+    .nowrap { white-space:nowrap; }
+    .notes { max-width:340px; }
+    .footer { color:var(--muted); font-size:12px; margin-top:12px; }
+    @media (max-width: 980px) {
+      .cards { grid-template-columns:repeat(2,1fr); }
+      .filtergrid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .cards { grid-template-columns:1fr; }
+      .filtergrid { grid-template-columns:1fr; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-
   <header>
-    <div class="eyebrow">2026 Season Tracker</div>
-    <h1>Track Meet Calendar <em>— 800m &amp; 1500m</em></h1>
-    <p class="lede">FAT timing opportunities, June through October 2026. Filter, sort, and search across confirmed and estimated meets in the Northeast and Mid-Atlantic.</p>
-    <a class="athletic-link" href="https://www.athletic.net/TrackAndField/Calendar" target="_blank" rel="noopener">Athletic.net Calendar</a>
+    <div class="wrap">
+      <h1>2026 Track Meet FAT Opportunity Tracker</h1>
+      <p class="sub">Operating dashboard for 800m and 1500m FAT opportunities. Rows marked Estimated or Watchlist should be verified weekly before planning travel.</p>
+      <div class="toplinks">
+        <a href="https://www.athletic.net/TrackAndField/Calendar" target="_blank" rel="noopener">Athletic.net Track & Field Calendar</a>
+        <a href="https://www.aauathletics.org/" target="_blank" rel="noopener">AAU Athletics</a>
+        <a href="https://www.usatf.org/events" target="_blank" rel="noopener">USATF Events</a>
+      </div>
+    </div>
   </header>
-
-  <div class="stats" id="stats"></div>
-
-  <div class="controls">
-    <div class="search-row">
-      <input type="text" id="search" class="search-input" placeholder="Search by meet name, city, venue, notes…">
-    </div>
-    <div class="filter-row">
-      <div class="filter-field">
-        <label for="f-month">Month</label>
-        <select id="f-month"><option value="">All months</option></select>
+  <main class="wrap">
+    <section class="cards" id="cards"></section>
+    <section class="filters">
+      <div class="filtergrid">
+        <input id="search" placeholder="Search meet, city, venue, notes…" />
+        <select id="month"><option value="">All months</option></select>
+        <select id="state"><option value="">All states</option></select>
+        <select id="type"><option value="">All types</option></select>
+        <select id="ranking"><option value="">All rankings</option></select>
+        <select id="status"><option value="">All statuses</option></select>
       </div>
-      <div class="filter-field">
-        <label for="f-state">State</label>
-        <select id="f-state"><option value="">All states</option></select>
+      <div class="actions">
+        <label><input type="checkbox" id="hideCompleted" style="width:auto; vertical-align:middle;"> Hide completed/closed meets</label>
+        <button class="btn" id="reset" type="button">Reset filters</button>
+        <span id="count"></span>
       </div>
-      <div class="filter-field">
-        <label for="f-type">Meet Type</label>
-        <select id="f-type"><option value="">All types</option></select>
-      </div>
-      <div class="filter-field">
-        <label for="f-rank">Ranking</label>
-        <select id="f-rank">
-          <option value="">All rankings</option>
-          <option value="A">A — best opportunity</option>
-          <option value="B">B — useful</option>
-          <option value="C">C — backup</option>
-        </select>
-      </div>
-      <div class="filter-field">
-        <label for="f-status">Status</label>
-        <select id="f-status"><option value="">All statuses</option></select>
-      </div>
-    </div>
-    <button class="reset-btn" id="reset">Clear filters</button>
-  </div>
-
-  <div class="table-wrap">
-    <div class="table-scroll">
-      <table id="meets-table">
-        <thead>
-          <tr>
-            <th data-sort="rank" class="col-rank">Rank<span class="sort-arrow"></span></th>
-            <th data-sort="date">Date<span class="sort-arrow"></span></th>
-            <th data-sort="name">Meet<span class="sort-arrow"></span></th>
-            <th data-sort="city" class="col-city">City<span class="sort-arrow"></span></th>
-            <th data-sort="state" class="col-state">ST<span class="sort-arrow"></span></th>
-            <th data-sort="venue" class="col-venue">Venue<span class="sort-arrow"></span></th>
-            <th data-sort="type">Type<span class="sort-arrow"></span></th>
-            <th data-sort="fat">FAT<span class="sort-arrow"></span></th>
-            <th data-sort="events" class="col-events">Events<span class="sort-arrow"></span></th>
-            <th>Registration</th>
-            <th data-sort="distance" class="col-distance">From Buffalo<span class="sort-arrow"></span></th>
-            <th data-sort="deadline">Deadline<span class="sort-arrow"></span></th>
-            <th data-sort="status">Status<span class="sort-arrow"></span></th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="14" class="empty-state">
-            <div class="empty-state-title">Loading meets…</div>
-          </td></tr>
-        </tbody>
+    </section>
+    <section class="tablewrap">
+      <table id="meetTable">
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
       </table>
-    </div>
-  </div>
-
-  <div class="legend">
-    <div class="legend-item"><span class="legend-swatch" style="background:var(--rank-a-bar)"></span><strong>A</strong> — best recruiting / PR opportunity</div>
-    <div class="legend-item"><span class="legend-swatch" style="background:var(--rank-b-bar)"></span><strong>B</strong> — useful opportunity</div>
-    <div class="legend-item"><span class="legend-swatch" style="background:var(--rank-c-bar)"></span><strong>C</strong> — backup or uncertain</div>
-    <div class="legend-item"><span class="legend-swatch" style="background:var(--deadline-urgent-bg);border:1px solid var(--deadline-urgent-ink)"></span>Deadline within 7 days</div>
-    <div class="legend-item"><span class="legend-swatch" style="background:var(--deadline-soon-bg);border:1px solid var(--deadline-soon-ink)"></span>Deadline within 21 days</div>
-  </div>
-
-  <footer>
-    <span id="data-source"></span> · <span id="last-updated"></span>
-  </footer>
-
-</div>
-
-<!-- Embedded CSV fallback. This is used when the page is opened directly via file:// (double-clicked).
-     When deployed to GitHub Pages or served via http://, meets.csv is fetched from disk instead.
-     If you edit meets.csv, you can ALSO update this block to keep local-preview in sync (optional). -->
-<script type="text/csv" id="csv-fallback">
-Date,Meet Name,City,State,Venue,Type,FAT,Events,Registration Link,Distance from Buffalo,Entry Deadline,Ranking,Status,Notes
-2026-06-13,Rutgers Summer Series Meet #1 estimated,Piscataway,NJ,Rutgers Track,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,Strong candidate if posted
-2026-06-20,Rutgers Summer Series Meet #2 estimated,Piscataway,NJ,Rutgers Track,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,A,Estimated,Strong candidate if posted
-2026-06-27,USATF Niagara Open & Masters Championships,Rochester,NY,Roberts Wesleyan University,USATF,Yes,800/1500,https://niagara.usatf.org/26tf,75 miles,TBD,B,Confirmed,Good local FAT baseline meet
-2026-06-27,USATF Niagara Junior Olympic Championships,Rochester,NY,Roberts Wesleyan University,USATF,Yes,800/1500,https://niagara.usatf.org/jotf25-1,75 miles,TBD,B,Confirmed,Youth pathway option
-2026-07-08,Villanova Summer Twilight #1 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,High-priority PR opportunity if open to unattached athletes
-2026-07-10,USATF Region 2 Junior Olympics,Bethlehem,PA,Lehigh University,USATF,Yes,800/1500,https://niagara.usatf.org/events,310 miles,TBD,B,Confirmed,Stronger field but requires qualification/eligibility check
-2026-07-10,Boston University All-Comers #1 estimated,Boston,MA,Boston University,Open / All-Comers,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,455 miles,TBD,A,Estimated,Longer trip but potentially strong field
-2026-07-15,Villanova Summer Twilight #2 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-07-16,USATF Masters Outdoor Championships,Geneva,OH,SPIRE Institute,USATF,Yes,800/1500,https://niagara.usatf.org/events,160 miles,TBD,C,Confirmed,Check youth/open entry eligibility
-2026-07-22,Villanova Summer Twilight #3 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-07-29,Villanova Summer Twilight #4 estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Estimated,Monitor Athletic.net weekly
-2026-08-01,Garden State Track Club Open estimated,New Brunswick,NJ,Various Tracks,Club,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,390 miles,TBD,B,Estimated,Monitor for FAT and event schedule
-2026-09-12,Villanova Early Season Meet estimated,Villanova,PA,Villanova Stadium,College Open,Yes,800/1500,https://www.athletic.net/TrackAndField/Calendar,365 miles,TBD,A,Watchlist,Check whether high school/unattached athletes may enter
-</script>
-
+    </section>
+    <p class="footer">Tip: update <code>track_meet_tracker_2026.csv</code> in GitHub. This page will try to load that file first, then fall back to embedded data for local viewing.</p>
+  </main>
 <script>
-/* ---------- CSV PARSER (handles quoted fields with commas) ---------- */
+const FALLBACK_CSV = `Meet_ID,Date_Start,Date_End,Month,Meet_Name,City,State,Venue,Host,Meet_Type,FAT_Status,Events_Targeted,Event_Verified,Unattached_Allowed,Age_Eligibility,Heat_Quality,Recruiting_Ranking,Status,Confidence,Distance_From_Buffalo_Miles,Drive_Time_Est,Entry_Deadline,Registration_URL,Info_URL,Source_Type,Last_Checked,Next_Action,Notes
+2026-NJ-PRIN-LARRY,2026-05-01,2026-05-02,May,Larry Ellis Invitational,Princeton,NJ,Weaver Stadium,Princeton University,College Invite/Open,Likely FAT,800/1500 likely,Partial,Verify,Verify HS/unattached entry,High,B,Confirmed 2026 / eligibility verify,Medium,360,6h 0m,Closed / past,https://www.athletic.net/TrackAndField/Calendar,https://goprincetontigers.com/news/2026/4/30/mens-track-and-field-set-to-host-larry-ellis-invitational,Web confirmed date/venue; eligibility unknown,2026-06-08,Use as model for 2027; not useful now because past,"High-quality college field, but this was before the target June-Oct window and may not allow HS athletes."
+2026-MA-BRTC-TW1,2026-05-09,2026-05-09,May,New Balance Battle Road Twilight Series Meet 1,Cambridge,MA,MIT,Battle Road Track Club / New Balance,Club Twilight / USATF sanctioned,Likely FAT,100m-10k; 800/1500 verify,Partial,Likely yes,Verify minimum age / HS entry,High,B,Confirmed 2026 / completed,High,455,7h 15m,Closed / past,https://www.directathletics.com/,https://battleroadtc.org/twilight-series/,Host page,2026-06-08,Ignore for 2026 unless results needed; use series pattern for future,"Confirmed 2026 series; featured event was 10k, so 800/1500 must be checked on meet-specific schedule/results."
+2026-MA-BRTC-TW2,2026-05-16,2026-05-16,May,New Balance Battle Road Twilight Series Meet 2,Cambridge,MA,MIT,Battle Road Track Club / New Balance,Club Twilight / USATF sanctioned,Likely FAT,800 featured; 1500 verify,Yes for 800; 1500 verify,Likely yes,Verify minimum age / HS entry,High,A,Confirmed 2026 / completed,High,455,7h 15m,Closed / past,https://www.directathletics.com/,https://battleroadtc.org/twilight-series/,Host page,2026-06-08,Use results as benchmark; this is a strong model event,Host page identifies 800 as the featured event; likely excellent PR/recruiting environment.
+2026-MA-BRTC-TW3,2026-05-30,2026-05-30,May,New Balance Battle Road Twilight Series Meet 3,Weston,MA,Regis College,Battle Road Track Club / New Balance,Club Twilight / USATF sanctioned,Likely FAT,1500 featured; 800 verify,Yes for 1500; 800 verify,Likely yes,Verify minimum age / HS entry,High,A,Confirmed 2026 / completed,High,445,7h 05m,Closed / past,https://www.directathletics.com/,https://battleroadtc.org/twilight-series/,Host page,2026-06-08,Use results as benchmark; this is a strong model event,Host page identifies 1500 as the featured event; highly relevant for recruiting mark.
+2026-PA-UPENN-SUMMER,2026-06-06,2026-06-06,June,UPenn Summer All-Comers / Open (est.),Philadelphia,PA,Franklin Field,University of Pennsylvania / local meet host,College Open/All-Comers,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium/High,A,Estimated / watchlist,Medium,370,6h 15m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm actual 2026 posting and entry rules,Restored from earlier list; keep because Franklin Field is a plausible high-quality PR venue.
+2026-NY-AAU-METRO-DQ,2026-06-07,2026-06-07,June,AAU New York Metropolitan District Qualifier,New York,NY,NYC area - verify exact venue,AAU New York Metropolitan,AAU District Qualifier,Likely FAT,800/1500 likely,Verify,Likely club/unattached with AAU membership,AAU age-group eligible,Medium,B,Reported/Results observed / completed,Medium,370,6h 30m,Closed / past,https://www.athletic.net/TrackAndField/Calendar,https://ny.milesplit.com/results,Milesplit calendar/results + Athletic.net hub,2026-06-08,Review results to confirm 800/1500 fields and FAT timing,Useful AAU pathway row; already past for 2026 but important for complete population tracking.
+2026-PA-USATF-MIDATL,2026-06-07,2026-06-08,June,USATF Mid-Atlantic Association JO Championships (est.),Millersville,PA,Biemesderfer Stadium,USATF Mid-Atlantic / Trojan Track Club,USATF Youth/JO,Likely FAT,800/1500 likely,Verify,Qualification/entry rules apply,USATF age eligibility,Medium,B,Estimated from prior/current page; verify year,Medium,330,5h 35m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://trojantrackclub.com/meets/mausatf-championships/,Host page watchlist,2026-06-08,Confirm 2026 date/year and deadline,Useful because it feeds Region 2; date/year needs verification before action.
+2026-MA-BRTC-TW4,2026-06-13,2026-06-13,June,New Balance Battle Road Twilight Series Meet 4,Weston,MA,Regis College,Battle Road Track Club / New Balance,Club Twilight / USATF sanctioned,Likely FAT,100m-10k; 800/1500 verify,Partial,Likely yes,Verify minimum age / HS entry,High,B,Confirmed 2026,High,445,7h 05m,Check DirectAthletics,https://www.directathletics.com/,https://battleroadtc.org/twilight-series/,Host page,2026-06-08,Confirm whether 800 or 1500 is on meet schedule and entry still open,"Featured event is 5k, but host describes full track range; verify 800/1500 before planning travel."
+2026-NJ-RUTGERS-1,2026-06-13,2026-06-13,June,Rutgers Summer Series Meet #1 (est.),Piscataway,NJ,Rutgers Track,Rutgers / local open meet host,College Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,390,6h 35m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm meet exists and has 800/1500,Restored original A-tier seed; verify because summer college schedules are late-posted.
+2026-OH-AAU-LAKEERIE-DQ,2026-06-13,2026-06-14,June,Lake Erie AAU District Meet,Cleveland,OH,Cleveland area - verify exact venue,Cleveland Mustangs Track & Field Club / AAU Lake Erie,AAU District Qualifier,Likely FAT,800/1500 likely,Verify,Likely club/unattached with AAU membership,AAU age-group eligible,Medium,B,Confirmed 2026 / event details verify,High,190,3h 15m,Check AAU/Athletic.net,https://www.athletic.net/TrackAndField/Calendar,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district page,2026-06-08,Find meet-specific Athletic.net page; confirm event schedule and registration deadline,Official AAU page lists Lake Erie district dates as June 13-14 2026.
+2026-DE-UDEL-SUMMER,2026-06-14,2026-06-14,June,University of Delaware Summer Open (est.),Newark,DE,University of Delaware Track,University of Delaware / local host,Open/College Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low,400,6h 45m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Confirm whether any June/July open is posted,Added for DE coverage; lower confidence until a specific listing appears.
+2026-VT-UVM-OPEN,2026-06-18,2026-06-18,June,Vermont Summer All-Comers / UVM Open (est.),Burlington,VT,UVM Track,UVM / local club,Open/All-Comers,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low,520,8h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search VT/UVM/open meets weekly,Added for VT coverage; long travel and low schedule certainty.
+2026-NY-AAU-ADK-DQ,2026-06-19,2026-06-20,June,AAU Adirondack District Qualifier,Schenectady,NY,Union College - verify,AAU Adirondack,AAU District Qualifier,Likely FAT,800/1500 likely,Verify,Likely club/unattached with AAU membership,AAU age-group eligible,Medium,B,User-reported / verify listing,Medium,260,4h 15m,Check Athletic.net,https://www.athletic.net/TrackAndField/Calendar,https://www.aausports.org/track-and-field/district-qualifiers/,User observed on Athletic.net + AAU district hub,2026-06-08,Open Athletic.net meet page; confirm exact venue and entry deadline,High-priority NY AAU option because it is relatively close and directly in age-group pathway.
+2026-NJ-RUTGERS-2,2026-06-20,2026-06-20,June,Rutgers Summer Series Meet #2 (est.),Piscataway,NJ,Rutgers Track,Rutgers / local open meet host,College Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,390,6h 35m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm meet exists and has 800/1500,Restored original A-tier seed.
+2026-RI-BROWN-OPEN,2026-06-21,2026-06-21,June,Rhode Island / Brown All-Comers (est.),Providence,RI,Brown University Track,Brown / local club,Open/All-Comers,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low,460,7h 15m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search RI/Brown/open meets weekly,Added for RI coverage; verify actual listing before relying on it.
+2026-NY-AAU-ADK-RQ,2026-06-25,2026-06-28,June,AAU Adirondack Qualifier / Regional Qualifier,Schenectady,NY,Union College - verify,AAU Adirondack / Region 1,AAU Regional/Qualifier,Likely FAT,800/1500 likely,Verify,Qualifying/eligibility rules apply,AAU age-group eligible; may require district qualification,Medium,B,User-reported / verify listing,Medium,260,4h 15m,Check Athletic.net,https://www.athletic.net/TrackAndField/Calendar,https://www.aausports.org/track-and-field/regional-qualifiers/,User observed on Athletic.net + AAU regional hub,2026-06-08,Confirm whether this is Region 1 and what qualification is required,AAU regional pathway can be useful but confirm whether she can enter based on district performance.
+2026-NJ-RUTGERS-3,2026-06-27,2026-06-27,June,Rutgers Summer Series Meet #3 (est.),Piscataway,NJ,Rutgers Track,Rutgers / local open meet host,College Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Low/Medium,390,6h 35m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm meet exists and does not conflict with USATF Niagara,Potential conflict date with local USATF Niagara meet.
+2026-NY-USATF-NIAG-JO,2026-06-27,2026-06-27,June,USATF Niagara Junior Olympic Track & Field Championships,Rochester,NY,Roberts Wesleyan University,USATF Niagara,USATF Youth/JO,Likely FAT,800/1500 likely,Verify schedule,Likely yes with USATF membership/age verification,USATF youth age group,Medium,B,Confirmed 2026,High,75,1h 20m,June TBD 23:59,https://niagara.usatf.org/jotf25-1,https://niagara.usatf.org/jotf25-1,USATF official page,2026-06-08,Confirm exact registration deadline and event schedule,Local youth option; likely good for getting a legal age-group FAT mark.
+2026-NY-USATF-NIAG-OPEN,2026-06-27,2026-06-27,June,USATF Niagara Open & Masters Outdoor Championships,Rochester,NY,Roberts Wesleyan University,USATF Niagara,USATF Open,Confirmed/likely FAT,800/1500 verify on schedule,Partial,Likely yes with USATF membership,Verify youth/open rules,Medium,B,Confirmed 2026,High,75,1h 20m,2026-06-25 23:59,https://niagara.usatf.org/26tf,https://niagara.usatf.org/26tf,USATF official page,2026-06-08,Register if 800/1500 are offered; confirm schedule,Best local baseline FAT opportunity; official page lists Roberts Wesleyan and June 25 deadline.
+2026-PA-SWARTHMORE-LC,2026-07-02,2026-07-02,July,Swarthmore Last Chance / Summer Open (est.),Swarthmore,PA,Swarthmore College,Swarthmore / local host,College Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,380,6h 25m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm 2026 event and entry standards,Keep because Swarthmore-style distance meets can produce fast fields; eligibility is key.
+2026-PA-VILL-TW1,2026-07-08,2026-07-08,July,Villanova Summer Twilight #1 (est.),Villanova,PA,Villanova Stadium,Villanova / local host,College Twilight/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,365,6h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,"Confirm actual listing, events and entry rules",Restored original A-tier meet; likely strong if real/open.
+2026-NH-UNH-OPEN,2026-07-09,2026-07-09,July,New Hampshire Track Club / UNH Open (est.),Durham,NH,UNH Track,UNH / local track club,Club/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low,530,8h 30m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search NH/UNH/open meets weekly,Added for NH coverage; useful mainly if paired with Boston/New England trip.
+2026-MA-BU-AC1,2026-07-10,2026-07-10,July,Boston University All-Comers #1 (est.),Boston,MA,Boston University Track,Boston University / local host,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Low/Medium,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm actual listing; BU outdoor access can vary,Restored original A-tier seed; verify venue and outdoor meet existence.
+2026-PA-USATF-R2-JO,2026-07-10,2026-07-12,July,USATF Region 2 Junior Olympic Track & Field Championships,Bethlehem,PA,Moravian University - Steel Athletic Complex,USATF Region 2 / Mid-Atlantic,USATF Regional/JO,Likely FAT,800/1500 likely,Verify schedule,Qualification required,USATF youth age group; top qualifiers advance,Medium/High,B,Confirmed 2026,High,310,5h 10m,Requires prior qualification / check Athletic.net passport,https://www.athletic.net/TrackAndField/Calendar,https://niagara.usatf.org/26region2tf,USATF official page,2026-06-08,Confirm qualification pathway from Niagara JO and deadline,Official USATF page lists July 10-12 and Moravian University/Steel Athletic Complex in Bethlehem.
+2026-NC-NCSTATE-OPEN,2026-07-11,2026-07-11,July,NC State / Raleigh Summer Track Meet (est.),Raleigh,NC,NC State / Raleigh-area track,NC State / local host,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium/High,A,Estimated / watchlist,Low,650,10h 30m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search NC/Raleigh/Durham summer opens weekly,Added for NC coverage; long trip but potentially good field if open.
+2026-PA-VILL-TW2,2026-07-15,2026-07-15,July,Villanova Summer Twilight #2 (est.),Villanova,PA,Villanova Stadium,Villanova / local host,College Twilight/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,365,6h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,"Confirm actual listing, events and entry rules",Restored original A-tier meet.
+2026-OH-USATF-MASTERS,2026-07-16,2026-07-19,July,USATF Masters Outdoor Championships,Geneva,OH,SPIRE Institute,USATF Masters / SPIRE,USATF Masters,Likely FAT,800/1500 for masters; youth not likely,No for youth,No/Not applicable for youth,Masters only; verify any open side meet,Low for her purpose,C,Confirmed 2026 / likely not usable,High,160,2h 40m,Check USATF/SPIRE,https://www.spireacademy.com/event/2026-usatf-masters-outdoor-championships/,https://www.spireacademy.com/event/2026-usatf-masters-outdoor-championships/,SPIRE official page,2026-06-08,Only monitor for adjacent open meet; do not plan as primary,Close to Buffalo but likely not an option for a 16-year-old unless there is an attached open meet.
+2026-MA-BU-AC2,2026-07-17,2026-07-17,July,Boston University All-Comers #2 (est.),Boston,MA,Boston University Track,Boston University / local host,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Low/Medium,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm actual listing,Restored original row.
+2026-NC-DUKE-TW,2026-07-18,2026-07-18,July,Duke / Durham Twilight Meet (est.),Durham,NC,Duke University Track,Duke / local host,College Twilight/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium/High,A,Estimated / watchlist,Low,650,10h 30m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search Duke/Durham summer opens weekly,Added for NC coverage; verify actual meet before planning.
+2026-PA-VILL-TW3,2026-07-22,2026-07-22,July,Villanova Summer Twilight #3 (est.),Villanova,PA,Villanova Stadium,Villanova / local host,College Twilight/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,365,6h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,"Confirm actual listing, events and entry rules",Restored original A-tier meet.
+2026-MA-BU-AC3,2026-07-24,2026-07-24,July,Boston University All-Comers #3 (est.),Boston,MA,Boston University Track,Boston University / local host,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Low/Medium,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm actual listing,Restored original row.
+2026-SC-USC-SUMMER,2026-07-25,2026-07-25,July,South Carolina Summer Meet / USC Open (est.),Columbia,SC,University of South Carolina Track,USC / local host,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium/High,A,Estimated / watchlist,Low,750,11h 45m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Search SC/USC/open meets weekly,SC restored; low-confidence seed until listing appears.
+2026-PA-VILL-TW4,2026-07-29,2026-07-29,July,Villanova Summer Twilight #4 (est.),Villanova,PA,Villanova Stadium,Villanova / local host,College Twilight/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Estimated / watchlist,Medium,365,6h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,"Confirm actual listing, events and entry rules",Restored original A-tier meet.
+2026-NJ-GSTC-OPEN,2026-08-01,2026-08-01,August,Garden State Track Club Open (est.),New Brunswick,NJ,Various NJ tracks,Garden State Track Club,Club/Open,Likely FAT,800/1500 verify,Verify,Likely yes,Verify HS age eligibility,Medium,B,Estimated / watchlist,Medium,390,6h 35m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.gardenstatetc.org/,Club watchlist,2026-06-08,Confirm 2026 meet page and timing,Restored original B-tier club option.
+2026-NC-SIRWALTER,2026-08-07,2026-08-07,August,Sir Walter Miler / Raleigh Distance Festival (est.),Raleigh,NC,Raleigh-area track,Sir Walter Running / local organizers,Track Festival / Elite + community,FAT likely,Mile; 800/1500 unlikely,No for target events,Verify open events,Verify HS eligibility,High if accepted,C,Estimated / alternative,Medium,650,10h 30m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://sirwaltermiler.com/,Known recurring distance festival watchlist,2026-06-08,Only include if a development/open 800/1500 is added,"Alternative mark environment, but not a direct 800/1500 solution unless supporting races exist."
+2026-MA-GBTC-OPEN,2026-08-08,2026-08-08,August,Greater Boston Track Club Meet (est.),Boston,MA,Boston-area track,Greater Boston TC,Club/Open,Likely FAT,800/1500 verify,Verify,Likely yes,Verify HS age eligibility,Medium,B,Estimated / watchlist,Medium,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.gbtc.org/,Club watchlist,2026-06-08,Confirm 2026 meet page and timing,Restored original Boston club option.
+2026-NJ-PRINCETON-AC,2026-08-15,2026-08-15,August,New Jersey All-Comers / Princeton Track Meet (est.),Princeton,NJ,Princeton Track,Local club / Princeton area,Open/All-Comers,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low/Medium,360,6h 0m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm actual 2026 posting,Restored original NJ all-comers row.
+2026-PA-PENN-TC,2026-08-22,2026-08-22,August,Penn Track Club Meet (est.),Philadelphia,PA,Franklin Field,Penn Track Club,Club/Open,Likely FAT,800/1500 verify,Verify,Likely yes,Verify HS age eligibility,Medium,B,Estimated / watchlist,Medium,370,6h 15m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.penntrackclub.com/,Club watchlist,2026-06-08,Confirm meet page and event list,Restored original Penn Track Club row.
+2026-MA-BC-INVITE,2026-09-05,2026-09-05,September,Boston College Early Fall Invitational (est.),Boston,MA,Boston College,Boston College,College Invite/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Watchlist,Low/Medium,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm whether fall track meet exists vs XC only,Restored original early-fall option; many September college events may be XC rather than track.
+2026-PA-VILL-FALL,2026-09-12,2026-09-12,September,Villanova Early Season / Fall Meet (est.),Villanova,PA,Villanova Stadium,Villanova,College Invite/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,High,A,Watchlist,Low/Medium,365,6h 10m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Confirm whether fall track meet exists and permits HS,Restored original fall option; verify against XC season reality.
+2026-VA-RICHMOND-OPEN,2026-09-19,2026-09-19,September,Richmond Open Meet (est.),Richmond,VA,University of Richmond,University of Richmond,College/Open,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium/High,A,Estimated / watchlist,Low,480,7h 55m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,State coverage watchlist,2026-06-08,Confirm whether September track meet exists vs XC only,Restored original VA/Richmond row.
+2026-NJ-PRINCETON-FALL,2026-10-03,2026-10-03,October,Princeton Fall Twilight / Open (est.),Princeton,NJ,Princeton Track,Local club / Princeton area,Open/Twilight,Likely FAT,800/1500 verify,Verify,Verify HS/unattached,Verify HS age eligibility,Medium,B,Estimated / watchlist,Low/Medium,360,6h 0m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://www.athletic.net/TrackAndField/Calendar,Prior-pattern / Athletic.net watchlist,2026-06-08,Search late summer for fall open listings,Restored original October final-window option.
+2026-CT-AAU-DQ,,,May-June,AAU Connecticut District Qualifier / Declare path,TBD,CT,TBD,AAU Connecticut,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,390,6h 20m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search AAU + Athletic.net for Connecticut District,Captures CT; AAU Region 1 includes Connecticut per AAU regional structure.
+2026-CT-USATF-OPEN,,,June-July,USATF Connecticut Youth/Open Championship watchlist,TBD,CT,TBD,USATF Connecticut,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,390,6h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://connecticut.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF Connecticut outdoor/youth/open meets,State-specific USATF population capture.
+2026-NE-AAU-DQ,,,May-June,AAU New England District Qualifier / Declare path,TBD,MA/NH/VT/RI,TBD,AAU New England,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,455,7h 20m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search New England AAU and Athletic.net weekly,Covers MA/NH/VT/RI where district may declare directly to regional.
+2026-NE-USATF-OPEN,,,June-July,USATF New England Youth/Open Championship watchlist,TBD,MA/NH/VT/RI,TBD,USATF New England,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,455,7h 20m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://newengland.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF New England outdoor/open meets,Covers New England states beyond Battle Road.
+2026-NC-AAU-DQ,,,May-June,AAU North Carolina District Qualifier / Regional path,TBD,NC,TBD,AAU North Carolina,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,650,10h 30m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search North Carolina AAU + Athletic.net,Added explicitly for NC coverage.
+2026-NC-USATF-OPEN,,,June-July,USATF North Carolina Youth/Open Championship watchlist,TBD,NC,TBD,USATF North Carolina,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,650,10h 30m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://northcarolina.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF NC outdoor/youth/open meets,Added for NC coverage.
+2026-NJ-AAU-DQ,,,May-June,AAU New Jersey District Qualifier / Declare path,TBD,NJ,TBD,AAU New Jersey,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,360,6h 0m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search AAU New Jersey + Athletic.net,Captures NJ AAU opportunities not otherwise in college/club rows.
+2026-NJ-USATF-OPEN,,,June-July,USATF New Jersey Youth/Open Championship watchlist,TBD,NJ,TBD,USATF New Jersey,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,360,6h 0m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://newjersey.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF NJ outdoor/youth/open meets,State-specific USATF population capture.
+2026-NY-AAU-NIAGARA-DQ,,,May-June,AAU Niagara District Qualifier / Declare path,TBD,NY,TBD,AAU Niagara,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,75,1h 20m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search AAU Niagara + Athletic.net,Important because WNY may be in AAU Region 4 pathway.
+2026-OH-AAU-OHIO-DQ,,,May-June,AAU Ohio District Qualifier / Declare path,TBD,OH,TBD,AAU Ohio,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,210,3h 30m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search Ohio AAU + Athletic.net,Separate from Lake Erie district; capture central/southern OH.
+2026-PA-AAU-MIDDLEATL-DQ,,,May-June,AAU Middle Atlantic District Qualifier / Declare path,TBD,PA/DE/NJ-South,TBD,AAU Middle Atlantic,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,370,6h 15m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search Middle Atlantic AAU and Athletic.net,Covers eastern PA and DE AAU opportunities.
+2026-SC-AAU-DQ,,,May-June,AAU South Carolina District Qualifier / Regional path,TBD,SC,TBD,AAU South Carolina,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,750,11h 45m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search South Carolina AAU + Athletic.net,SC restored and explicitly captured.
+2026-SC-USATF-OPEN,,,June-July,USATF South Carolina Youth/Open Championship watchlist,TBD,SC,TBD,USATF South Carolina,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,750,11h 45m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://southcarolina.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF SC outdoor/youth/open meets,SC restored with explicit USATF pathway row.
+2026-VA-AAU-DQ,,,May-June,AAU Virginia District Qualifier / Region 5 path,TBD,VA,TBD,AAU Virginia,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,480,7h 55m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search Virginia AAU + Athletic.net,Captures VA AAU population.
+2026-VA-USATF-OPEN,,,June-July,USATF Virginia Youth/Open Championship watchlist,TBD,VA,TBD,USATF Virginia,USATF Association/Open,Likely FAT,800/1500 likely,No,Likely with USATF membership,USATF age eligibility,Medium,B,Watchlist,Low,480,7h 55m,TBD,https://www.athletic.net/TrackAndField/Calendar,https://virginia.usatf.org/,USATF/athletic.net watchlist,2026-06-08,Search USATF Virginia outdoor/youth/open meets,State-specific USATF population capture.
+2026-WV-AAU-DQ,,,May-June,AAU West Virginia District Qualifier / Declare path,TBD,WV,TBD,AAU West Virginia,AAU District Qualifier,Likely FAT if meet held,800/1500 likely,No,Likely with AAU membership,AAU age-group eligible,Medium,B,Watchlist,Low,320,5h 15m,TBD,https://www.aausports.org/track-and-field/district-qualifiers/,https://www.aausports.org/track-and-field/district-qualifiers/,AAU official district hub,2026-06-08,Search WV AAU + Athletic.net,"Captures WV, but viable meet volume may be low."
+`;
+const CSV_FILE = 'track_meet_tracker_2026.csv';
+const DISPLAY_COLS = [
+  'Date_Start','Date_End','Month','Meet_Name','City','State','Venue','Meet_Type','FAT','Events_Offered',
+  'Registration_URL','Info_URL','Distance_From_Buffalo_Miles','Drive_Time_Est','Entry_Deadline','Recruiting_Ranking','Status','Confidence',
+  'Event_Verified','Unattached_Allowed','Age_Eligibility','Heat_Quality','Next_Action','Notes'
+];
+let data = [];
+let sortKey = 'Date_Start';
+let sortDir = 1;
 function parseCSV(text) {
   const rows = [];
-  let row = [], field = '', inQuotes = false, i = 0;
-  while (i < text.length) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c === '"') {
-        if (text[i+1] === '"') { field += '"'; i += 2; continue; }
-        inQuotes = false; i++; continue;
-      }
-      field += c; i++; continue;
-    }
-    if (c === '"') { inQuotes = true; i++; continue; }
-    if (c === ',') { row.push(field); field = ''; i++; continue; }
-    if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i+1] === '\n') i++;
-      row.push(field); rows.push(row); row = []; field = ''; i++; continue;
-    }
-    field += c; i++;
+  let row = [], field = '', inQuotes = false;
+  for (let i=0; i<text.length; i++) {
+    const c = text[i], n = text[i+1];
+    if (c === '"') {
+      if (inQuotes && n === '"') { field += '"'; i++; } else inQuotes = !inQuotes;
+    } else if (c === ',' && !inQuotes) { row.push(field); field=''; }
+    else if ((c === '
+' || c === '
+') && !inQuotes) {
+      if (c === '
+' && n === '
+') i++;
+      row.push(field); field='';
+      if (row.some(x => x.trim() !== '')) rows.push(row);
+      row=[];
+    } else field += c;
   }
-  if (field.length || row.length) { row.push(field); rows.push(row); }
-  // Filter out empty rows
-  return rows.filter(r => r.some(cell => cell && cell.trim().length));
+  if (field.length || row.length) { row.push(field); if (row.some(x => x.trim() !== '')) rows.push(row); }
+  const headers = rows.shift().map(h => h.trim());
+  return rows.map(r => Object.fromEntries(headers.map((h,i) => [h, (r[i] ?? '').trim()])));
 }
-
-function csvToObjects(text) {
-  const rows = parseCSV(text);
-  if (!rows.length) return [];
-  const headers = rows[0].map(h => h.trim());
-  return rows.slice(1).map(r => {
-    const o = {};
-    headers.forEach((h, idx) => { o[h] = (r[idx] || '').trim(); });
-    return o;
+async function loadData() {
+  try {
+    const res = await fetch(CSV_FILE + '?v=' + Date.now(), { cache:'no-store' });
+    if (!res.ok) throw new Error('CSV fetch failed');
+    data = parseCSV(await res.text());
+  } catch (e) {
+    data = parseCSV(FALLBACK_CSV);
+  }
+  init();
+}
+function unique(col) { return [...new Set(data.map(r => r[col]).filter(Boolean))].sort(); }
+function addOptions(id, col) {
+  const sel = document.getElementById(id);
+  unique(col).forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+}
+function init() {
+  addOptions('month','Month'); addOptions('state','State'); addOptions('type','Meet_Type'); addOptions('ranking','Recruiting_Ranking'); addOptions('status','Status');
+  document.querySelectorAll('input,select').forEach(el => el.addEventListener('input', render));
+  document.getElementById('reset').addEventListener('click', () => {
+    ['search','month','state','type','ranking','status'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('hideCompleted').checked=false; render();
   });
+  const tr = document.getElementById('thead');
+  DISPLAY_COLS.forEach(col => {
+    const th=document.createElement('th'); th.textContent=label(col); th.onclick=()=>{ sortKey===col ? sortDir*=-1 : (sortKey=col, sortDir=1); render(); }; tr.appendChild(th);
+  });
+  render();
 }
-
-/* ---------- DATE / DEADLINE HELPERS ---------- */
-const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
-function parseDate(s) {
-  if (!s) return null;
-  // Expecting YYYY-MM-DD
-  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
-  const d = new Date(s);
-  return isNaN(d) ? null : d;
-}
-
-function fmtDate(d) {
-  if (!d) return '';
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function deadlineDays(s) {
-  // returns number of days until deadline, or null if not parseable / TBD
-  if (!s || /tbd|unknown|n\/a/i.test(s)) return null;
-  const d = parseDate(s);
-  if (!d) return null;
-  const today = new Date();
-  today.setHours(0,0,0,0);
+function label(s) { return s.replaceAll('_',' '); }
+function daysUntil(dateStr) {
+  if (!dateStr || dateStr.toUpperCase()==='TBD') return null;
+  const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d)) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
   return Math.round((d - today) / 86400000);
 }
-
-/* ---------- STATE ---------- */
-let DATA = [];
-let view = [];
-let sortKey = 'date';
-let sortDir = 'asc';
-
-const $tbody = document.getElementById('tbody');
-const $search = document.getElementById('search');
-const $fMonth = document.getElementById('f-month');
-const $fState = document.getElementById('f-state');
-const $fType  = document.getElementById('f-type');
-const $fRank  = document.getElementById('f-rank');
-const $fStatus= document.getElementById('f-status');
-const $reset  = document.getElementById('reset');
-const $stats  = document.getElementById('stats');
-const $lastUpdated = document.getElementById('last-updated');
-const $dataSource = document.getElementById('data-source');
-
-/* ---------- POPULATE FILTERS ---------- */
-function uniqueSorted(arr) {
-  return [...new Set(arr.filter(Boolean))].sort();
-}
-
-function populateFilters() {
-  // Month dropdown — derive from dates present
-  const months = uniqueSorted(DATA.map(r => {
-    const d = parseDate(r.Date);
-    return d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` : null;
-  }));
-  months.forEach(m => {
-    const [y, mo] = m.split('-');
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = `${MONTH_NAMES[+mo-1]} ${y}`;
-    $fMonth.appendChild(opt);
-  });
-
-  uniqueSorted(DATA.map(r => r.State)).forEach(v => {
-    $fState.appendChild(new Option(v, v));
-  });
-  uniqueSorted(DATA.map(r => r.Type)).forEach(v => {
-    $fType.appendChild(new Option(v, v));
-  });
-  uniqueSorted(DATA.map(r => r.Status)).forEach(v => {
-    $fStatus.appendChild(new Option(v, v));
-  });
-}
-
-/* ---------- FILTERING + SORTING ---------- */
-function applyFilters() {
-  const q = $search.value.trim().toLowerCase();
-  const month = $fMonth.value;
-  const state = $fState.value;
-  const type = $fType.value;
-  const rank = $fRank.value;
-  const status = $fStatus.value;
-
-  view = DATA.filter(r => {
-    if (state && r.State !== state) return false;
-    if (type && r.Type !== type) return false;
-    if (rank && r.Ranking !== rank) return false;
-    if (status && r.Status !== status) return false;
-    if (month) {
-      const d = parseDate(r.Date);
-      if (!d) return false;
-      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-      if (key !== month) return false;
-    }
-    if (q) {
-      const hay = [r['Meet Name'], r.City, r.State, r.Venue, r.Notes, r.Type, r.Events]
-        .join(' ').toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+function filtered() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filters = {Month:'month',State:'state',Meet_Type:'type',Recruiting_Ranking:'ranking',Status:'status'};
+  return data.filter(r => {
+    if (document.getElementById('hideCompleted').checked && ['Completed','Closed'].includes(r.Status)) return false;
+    for (const [col,id] of Object.entries(filters)) { if (document.getElementById(id).value && r[col] !== document.getElementById(id).value) return false; }
+    if (q && !Object.values(r).join(' ').toLowerCase().includes(q)) return false;
     return true;
-  });
-
-  applySort();
-  render();
-  renderStats();
+  }).sort((a,b) => ((a[sortKey]||'').localeCompare(b[sortKey]||'', undefined, {numeric:true})) * sortDir);
 }
-
-function applySort() {
-  const dir = sortDir === 'asc' ? 1 : -1;
-  const rankOrder = { A: 1, B: 2, C: 3 };
-
-  view.sort((a, b) => {
-    let av, bv;
-    switch (sortKey) {
-      case 'date':
-        av = parseDate(a.Date)?.getTime() ?? Infinity;
-        bv = parseDate(b.Date)?.getTime() ?? Infinity;
-        break;
-      case 'rank':
-        av = rankOrder[a.Ranking] ?? 99;
-        bv = rankOrder[b.Ranking] ?? 99;
-        break;
-      case 'name':     av = a['Meet Name'] || ''; bv = b['Meet Name'] || ''; break;
-      case 'city':     av = a.City || ''; bv = b.City || ''; break;
-      case 'state':    av = a.State || ''; bv = b.State || ''; break;
-      case 'venue':    av = a.Venue || ''; bv = b.Venue || ''; break;
-      case 'type':     av = a.Type || ''; bv = b.Type || ''; break;
-      case 'fat':      av = a.FAT || ''; bv = b.FAT || ''; break;
-      case 'events':   av = a.Events || ''; bv = b.Events || ''; break;
-      case 'distance':
-        av = parseInt((a['Distance from Buffalo']||'').replace(/[^\d]/g,''), 10) || 99999;
-        bv = parseInt((b['Distance from Buffalo']||'').replace(/[^\d]/g,''), 10) || 99999;
-        break;
-      case 'deadline':
-        av = parseDate(a['Entry Deadline'])?.getTime() ?? Infinity;
-        bv = parseDate(b['Entry Deadline'])?.getTime() ?? Infinity;
-        break;
-      case 'status':   av = a.Status || ''; bv = b.Status || ''; break;
-      default:         av = ''; bv = '';
-    }
-    if (typeof av === 'string') return av.localeCompare(bv) * dir;
-    return (av - bv) * dir;
-  });
+function renderCards(rows) {
+  const upcoming = rows.filter(r => r.Date_Start >= '2026-06-08').sort((a,b)=>a.Date_Start.localeCompare(b.Date_Start))[0];
+  const deadlines14 = rows.filter(r => { const d=daysUntil(r.Entry_Deadline); return d !== null && d >=0 && d <=14; }).length;
+  const cards = [
+    ['Visible Meets', rows.length, 'After filters'],
+    ['A-Tier Meets', rows.filter(r=>r.Recruiting_Ranking==='A').length, 'Best PR/recruiting targets'],
+    ['Confirmed', rows.filter(r=>r.Status==='Confirmed').length, 'Actual date/location known'],
+    ['Deadlines ≤14 Days', deadlines14, 'Based on Entry Deadline'],
+    ['Next Meet', upcoming ? upcoming.Date_Start : '—', upcoming ? upcoming.Meet_Name : 'No upcoming visible meet']
+  ];
+  document.getElementById('cards').innerHTML = cards.map(c => `<div class="card"><div class="label">${esc(c[0])}</div><div class="value">${esc(String(c[1]))}</div><div class="small">${esc(c[2])}</div></div>`).join('');
 }
-
-/* ---------- RENDER ---------- */
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c =>
-    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-}
-
-function renderStats() {
-  const total = view.length;
-  const aCount = view.filter(r => r.Ranking === 'A').length;
-  const confirmed = view.filter(r => r.Status === 'Confirmed').length;
-  const watchlist = view.filter(r => r.Status === 'Watchlist').length;
-
-  // Upcoming = date within next 60 days
-  const today = new Date(); today.setHours(0,0,0,0);
-  const horizon = new Date(today); horizon.setDate(horizon.getDate() + 60);
-  const upcoming = view.filter(r => {
-    const d = parseDate(r.Date);
-    return d && d >= today && d <= horizon;
-  }).length;
-
-  $stats.innerHTML = `
-    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Showing</div></div>
-    <div class="stat"><div class="stat-num">${aCount}</div><div class="stat-label">A-Rank</div></div>
-    <div class="stat"><div class="stat-num">${confirmed}</div><div class="stat-label">Confirmed</div></div>
-    <div class="stat"><div class="stat-num">${watchlist}</div><div class="stat-label">Watchlist</div></div>
-    <div class="stat"><div class="stat-num">${upcoming}</div><div class="stat-label">Next 60 days</div></div>
-  `;
-}
-
-function renderDeadline(s) {
-  const days = deadlineDays(s);
-  const raw = escapeHtml(s || 'TBD');
-  if (days === null) return raw;
-  if (days < 0) return `<span style="color:var(--ink-mute)">${raw} (passed)</span>`;
-  if (days <= 7)  return `<span class="deadline-urgent">${raw} · ${days}d</span>`;
-  if (days <= 21) return `<span class="deadline-soon">${raw} · ${days}d</span>`;
-  return `${raw} <span style="color:var(--ink-mute)">· ${days}d</span>`;
-}
-
-function renderRegLink(url) {
-  if (!url) return '<span style="color:var(--ink-mute)">—</span>';
-  // Shorten display
-  let display;
-  try {
-    const u = new URL(url);
-    display = u.hostname.replace(/^www\./, '');
-  } catch {
-    display = url;
+function esc(s) { return String(s ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function cell(col, val, row) {
+  if ((col === 'Registration_URL' || col === 'Info_URL') && val) return `<a href="${esc(val)}" target="_blank" rel="noopener">Open</a>`;
+  if (col === 'Meet_Name') return `<span class="meet">${esc(val)}</span>`;
+  if (col === 'Recruiting_Ranking' && val) return `<span class="pill rank-${esc(val)}">${esc(val)}</span>`;
+  if (col === 'Status' && val) return `<span class="pill status-${esc(val)}">${esc(val)}</span>`;
+  if (col === 'Entry_Deadline') {
+    const d=daysUntil(val); let cls='';
+    if (d !== null && d >= 0 && d <= 7) cls='deadline-soon';
+    else if (d !== null && d >= 0 && d <= 21) cls='deadline-watch';
+    return `<span class="${cls}">${esc(val || 'TBD')}</span>`;
   }
-  return `<a class="reg-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(display)} ↗</a>`;
+  if (['Notes','Next_Action'].includes(col)) return `<span class="notes">${esc(val)}</span>`;
+  return esc(val);
 }
-
 function render() {
-  if (!view.length) {
-    $tbody.innerHTML = `<tr><td colspan="14" class="empty-state">
-      <div class="empty-state-title">No meets match these filters</div>
-      <div>Try clearing one or more filters above.</div>
-    </td></tr>`;
-    return;
-  }
-
-  $tbody.innerHTML = view.map(r => {
-    const rank = (r.Ranking || '').toUpperCase();
-    const status = (r.Status || '').toLowerCase();
-    const date = parseDate(r.Date);
-    const fatYes = /^y/i.test(r.FAT || '');
-    return `
-      <tr class="row-${rank}">
-        <td class="rank-cell"><span class="rank-badge rank-${rank}">${escapeHtml(rank || '—')}</span></td>
-        <td>
-          <div class="date-main">${fmtDate(date) || escapeHtml(r.Date)}</div>
-          <div class="date-sub">${date ? date.getFullYear() : ''}</div>
-        </td>
-        <td>
-          <div class="meet-name">${escapeHtml(r['Meet Name'])}</div>
-          <div class="meet-venue">${escapeHtml(r.Venue || '')}</div>
-        </td>
-        <td class="col-city">${escapeHtml(r.City || '')}</td>
-        <td class="col-state">${escapeHtml(r.State || '')}</td>
-        <td class="col-venue">${escapeHtml(r.Venue || '')}</td>
-        <td>${escapeHtml(r.Type || '')}</td>
-        <td>${fatYes ? '<span class="fat-yes">✓ Yes</span>' : `<span class="fat-no">${escapeHtml(r.FAT || '—')}</span>`}</td>
-        <td class="col-events">${escapeHtml(r.Events || '')}</td>
-        <td>${renderRegLink(r['Registration Link'])}</td>
-        <td class="col-distance">${escapeHtml(r['Distance from Buffalo'] || '')}</td>
-        <td>${renderDeadline(r['Entry Deadline'])}</td>
-        <td><span class="status status-${status}">${escapeHtml(r.Status || '')}</span></td>
-        <td class="notes-cell">${escapeHtml(r.Notes || '')}</td>
-      </tr>
-    `;
-  }).join('');
+  const rows = filtered(); renderCards(rows);
+  document.getElementById('count').textContent = `${rows.length} meet rows shown`;
+  document.getElementById('tbody').innerHTML = rows.map(r => `<tr>${DISPLAY_COLS.map(c => `<td>${cell(c, r[c], r)}</td>`).join('')}</tr>`).join('');
 }
-
-/* ---------- HEADER SORT CLICKS ---------- */
-function setupSorting() {
-  document.querySelectorAll('th[data-sort]').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.sort;
-      if (sortKey === key) {
-        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortKey = key;
-        sortDir = 'asc';
-      }
-      // Update header arrows
-      document.querySelectorAll('th[data-sort]').forEach(h => {
-        h.classList.remove('sorted-asc', 'sorted-desc');
-        h.querySelector('.sort-arrow').textContent = '';
-      });
-      th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
-      th.querySelector('.sort-arrow').textContent = sortDir === 'asc' ? '↑' : '↓';
-      applySort();
-      render();
-    });
-  });
-}
-
-/* ---------- LOAD ---------- */
-async function tryFetchCSV() {
-  // fetch() with file:// is blocked in most browsers — that's the whole reason for the embedded fallback.
-  // We still try fetch first so that on GitHub Pages / a real server, edits to meets.csv go live without
-  // touching index.html.
-  if (location.protocol === 'file:') return null;
-  try {
-    const res = await fetch('meets.csv', { cache: 'no-cache' });
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
-  }
-}
-
-function getEmbeddedCSV() {
-  const el = document.getElementById('csv-fallback');
-  return el ? el.textContent.trim() : '';
-}
-
-async function load() {
-  let text = await tryFetchCSV();
-  let source = 'meets.csv';
-  if (!text) {
-    text = getEmbeddedCSV();
-    source = 'embedded data (local preview)';
-  }
-
-  if (!text) {
-    $tbody.innerHTML = `<tr><td colspan="14" class="empty-state">
-      <div class="empty-state-title">No meet data found</div>
-      <div>Neither <code>meets.csv</code> nor the embedded fallback could be loaded.</div>
-    </td></tr>`;
-    return;
-  }
-
-  try {
-    DATA = csvToObjects(text);
-    populateFilters();
-    setupSorting();
-
-    // Default sort: by date ascending
-    const dateHeader = document.querySelector('th[data-sort="date"]');
-    dateHeader.classList.add('sorted-asc');
-    dateHeader.querySelector('.sort-arrow').textContent = '↑';
-
-    applyFilters();
-
-    $dataSource.textContent = `Source: ${source}`;
-    $lastUpdated.textContent = `${DATA.length} meets · ${new Date().toLocaleString()}`;
-  } catch (err) {
-    console.error(err);
-    $tbody.innerHTML = `<tr><td colspan="14" class="empty-state">
-      <div class="empty-state-title">Couldn't parse meet data</div>
-      <div>Check that the CSV has the expected columns and is properly formatted.</div>
-    </td></tr>`;
-  }
-}
-
-/* ---------- LISTENERS ---------- */
-[$search, $fMonth, $fState, $fType, $fRank, $fStatus].forEach(el => {
-  el.addEventListener('input', applyFilters);
-  el.addEventListener('change', applyFilters);
-});
-$reset.addEventListener('click', () => {
-  $search.value = '';
-  [$fMonth, $fState, $fType, $fRank, $fStatus].forEach(el => el.value = '');
-  applyFilters();
-});
-
-load();
+loadData();
 </script>
 </body>
 </html>
